@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pytania i odpowiedzi — weryfikacja atrybutów encji</title>
+  <meta name="description" content="Sugerowane pytania i odpowiedzi na spotkanie z liderem: zakres, technika, dane, bezpieczeństwo, plan i ryzyka weryfikacji atrybutów encji.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+          boxShadow: {
+            soft: "0 24px 60px -20px rgba(15, 23, 42, 0.18)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-feature-settings: "ss01" on;
+    }
+
+    ::selection {
+      background: #ddd6fe;
+      color: #2e1065;
+    }
+
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+      mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+    }
+
+    .section-anchor {
+      scroll-margin-top: 6rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-violet-200/40 blur-3xl"></div>
+    <div class="absolute -right-32 top-[38rem] h-[28rem] w-[28rem] rounded-full bg-indigo-200/40 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-sky-200/40 blur-3xl"></div>
+  </div>
+
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
+      <a href="#gora" class="flex items-center gap-3" aria-label="Przejdź do początku dokumentu">
+        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-900/20">?</span>
+        <span class="hidden sm:block">
+          <span class="block text-sm font-extrabold tracking-tight text-slate-950">Pytania i odpowiedzi</span>
+          <span class="block text-xs text-slate-500">Weryfikacja atrybutów encji</span>
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-1 rounded-full border border-slate-200 bg-white/70 p-1 text-sm font-semibold text-slate-600 shadow-sm lg:flex" aria-label="Nawigacja główna">
+        <a href="#zakres" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Zakres</a>
+        <a href="#technika" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Technika</a>
+        <a href="#dane" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Dane</a>
+        <a href="#bezpieczenstwo" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Bezpieczeństwo</a>
+        <a href="#plan" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Plan</a>
+        <a href="#ryzyko" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Ryzyko</a>
+        <a href="#sciaga" class="rounded-full bg-slate-950 px-3 py-2 text-white transition hover:bg-slate-800">Ściąga</a>
+      </nav>
+
+      <a href="#sciaga" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
+        Ściąga
+      </a>
+    </div>
+  </header>
+
+  <main id="gora" class="mx-auto max-w-7xl px-6 pb-24">
+
+    <!-- Sekcja powitalna -->
+    <section class="pt-10">
+      <div class="relative overflow-hidden rounded-[2.5rem] bg-slate-950 px-7 py-12 shadow-2xl shadow-slate-900/25 sm:px-12 lg:px-16 lg:py-16">
+        <div class="hero-grid absolute inset-0" aria-hidden="true"></div>
+        <div class="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-violet-500/25 blur-3xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-sky-400/20 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-violet-200">
+              <span class="h-2 w-2 rounded-full bg-violet-400"></span>
+              Materiał na spotkanie · 24 pytania
+            </span>
+
+            <h1 class="mt-7 text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Pytania i odpowiedzi
+              <span class="block bg-gradient-to-r from-violet-300 via-indigo-200 to-sky-300 bg-clip-text text-transparent">
+                zamiast domysłów
+              </span>
+            </h1>
+
+            <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+              Najczęstsze pytania, które lider zada przed zatwierdzeniem pilotażu — z krótką odpowiedzią i wskazaniem dokumentu, w którym znajduje się pełne uzasadnienie.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">💬</span> 24 pytania
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🗂️</span> 6 obszarów
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🔗</span> Każda odpowiedź ze źródłem
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">⏱️</span> 15 minut na spotkanie
+              </span>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-8">
+            <div class="flex items-center justify-between gap-4">
+              <h2 class="text-lg font-extrabold text-white">Jak korzystać</h2>
+              <span class="rounded-full bg-violet-400/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-violet-300">Instrukcja</span>
+            </div>
+
+            <div class="mt-5 space-y-4">
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-violet-400/15 text-xs font-black text-violet-300">1</span>
+                <p class="text-sm leading-6 text-slate-300">Odpowiedzi są krótkie i celowo nie zastępują dokumentów źródłowych.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-violet-400/15 text-xs font-black text-violet-300">2</span>
+                <p class="text-sm leading-6 text-slate-300">Przy każdym pytaniu znajduje się link do miejsca z pełnym uzasadnieniem.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-violet-400/15 text-xs font-black text-violet-300">3</span>
+                <p class="text-sm leading-6 text-slate-300">Jeśli odpowiedź nie pasuje do kontekstu, najpierw sprawdź źródło — nie improwizuj.</p>
+              </div>
+            </div>
+
+            <a href="#sciaga" class="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-extrabold text-slate-950 transition hover:bg-violet-100">
+              Przejdź do ściągi
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ściąga -->
+    <section id="sciaga" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">00</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Ściąga</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Sześć pytań, które padną na pewno</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Jeśli na spotkaniu zostanie tylko kwadrans, zacznij od tych sześciu odpowiedzi. Reszta jest rozwinięciem w sekcjach poniżej.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="#p1" class="group rounded-3xl border border-violet-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-violet-600">Pytanie 1</span>
+          <h3 class="mt-2 text-base font-extrabold text-slate-950 group-hover:text-violet-800">Po co, skoro QA testuje aplikację?</h3>
+          <p class="mt-1 text-sm leading-6 text-slate-500">QA sprawdza zachowanie, my — kompletność danych.</p>
+        </a>
+
+        <a href="#p5" class="group rounded-3xl border border-violet-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-violet-600">Pytanie 5</span>
+          <h3 class="mt-2 text-base font-extrabold text-slate-950 group-hover:text-violet-800">Dlaczego nie oficjalne API?</h3>
+          <p class="mt-1 text-sm leading-6 text-slate-500">Bo go nie ma, a budowa oznacza zmiany i zależność.</p>
+        </a>
+
+        <a href="#p7" class="group rounded-3xl border border-violet-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-violet-600">Pytanie 7</span>
+          <h3 class="mt-2 text-base font-extrabold text-slate-950 group-hover:text-violet-800">Skąd pewność, że dane = interfejs?</h3>
+          <p class="mt-1 text-sm leading-6 text-slate-500">Sprawdzamy to na pilocie 5–10 encji.</p>
+        </a>
+
+        <a href="#p13" class="group rounded-3xl border border-violet-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-violet-600">Pytanie 13</span>
+          <h3 class="mt-2 text-base font-extrabold text-slate-950 group-hover:text-violet-800">Czy to bezpieczne?</h3>
+          <p class="mt-1 text-sm leading-6 text-slate-500">Tak: konto tylko do odczytu i blokada zapisów.</p>
+        </a>
+
+        <a href="#p17" class="group rounded-3xl border border-violet-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-violet-600">Pytanie 17</span>
+          <h3 class="mt-2 text-base font-extrabold text-slate-950 group-hover:text-violet-800">Ile to potrwa?</h3>
+          <p class="mt-1 text-sm leading-6 text-slate-500">13 dni bazowo i 2 dni bufora dla jednej osoby.</p>
+        </a>
+
+        <a href="#p22" class="group rounded-3xl border border-violet-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-violet-600">Pytanie 22</span>
+          <h3 class="mt-2 text-base font-extrabold text-slate-950 group-hover:text-violet-800">Co, jeśli wyniki się nie zgodzą?</h3>
+          <p class="mt-1 text-sm leading-6 text-slate-500">To właśnie ma pokazać raport — z dowodem.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- 01. Zakres -->
+    <section id="zakres" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">01</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Zakres i decyzja</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Dlaczego robimy to właśnie tak?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Pytania o sens przedsięwzięcia pojawiają się pierwsze. Odpowiedź powinna od razu oddzielić kontrolę danych od testów funkcjonalnych i od zarządzania aplikacją.
+      </p>
+
+      <div class="mt-8 space-y-4">
+        <article id="p1" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P1</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Po co nam to narzędzie, skoro QA testuje aplikację?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Zakres</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            QA sprawdza zachowanie aplikacji na wybranych scenariuszach. To narzędzie sprawdza coś innego: czy <span class="font-semibold text-slate-900">wszystkie encje z pliku CSV mają komplet atrybutów</span> i czy wartości są zgodne. To warstwa kontroli danych, a nie test funkcjonalny.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./brief.html#problem" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">brief.html — Problem</a></p>
+        </article>
+
+        <article id="p2" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P2</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Dlaczego nie wystarczy ręczna weryfikacja?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Zakres</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Ręczna weryfikacja jest wolna, zależy od uwagi osoby wykonującej i nie zostawia spójnego dowodu. Przy kilkuset encjach i częstych zmianach CSV rośnie ryzyko, że rozjazd pozostanie niezauważony. Automatyzacja daje powtarzalność, nie „zero różnic”.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./brief.html#cel" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">brief.html — Cel i mierniki</a></p>
+        </article>
+
+        <article id="p3" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P3</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Czy to zastąpi panel administracyjny?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Zakres</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Nie. Narzędzie tylko odczytuje dane i tworzy raport. Nie edytuje encji, nie zapisuje poprawek i nie zastępuje panelu. Świadomie odrzuciliśmy automatyczne poprawianie danych — zbyt wysokie ryzyko przy setkach encji.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./mvp.html#nie" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">mvp.html — Poza zakresem</a></p>
+        </article>
+
+        <article id="p4" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P4</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Czy to duplikuje pracę zespołu danych?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Zakres</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Nie, jeśli właściciel CSV jest włączony od początku. Zespół danych dostarcza plik i rozstrzyga przypadki brzegowe, a narzędzie automatyzuje żmudne porównanie. Decyzje biznesowe nadal należą do ludzi.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./data-contract.html#pytania" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">data-contract.html — Pytania otwarte</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 02. Technika -->
+    <section id="technika" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">02</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Technika</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Dlaczego nie prościej?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Pytania techniczne zwykle sprowadzają się do jednego: „czy nie da się tego zrobić inaczej?”. Odpowiedź musi pokazać kompromis, a nie bronić wyboru za wszelką cenę.
+      </p>
+
+      <div class="mt-8 space-y-4">
+        <article id="p5" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">P5</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Dlaczego nie oficjalne API?</h3>
+            </div>
+            <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">Technika</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Bo go nie ma. Zbudowanie API oznacza zmiany w starszej aplikacji, zależność od innego zespołu i czas poza kontrolą. MVP korzysta z istniejącego transportu i sesji, dzięki czemu nie wymaga modyfikacji systemu.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./approach.html#podejscie" class="text-indigo-700 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-900">approach.html — Podejście</a></p>
+        </article>
+
+        <article id="p6" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">P6</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Dlaczego nie Selenium albo headless?</h3>
+            </div>
+            <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">Technika</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Selenium jest wolniejsze i bardziej kruche, a i tak trzeba by odtworzyć sesję i transport. <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs font-semibold">$.post</code> używa dokładnie tego mechanizmu co aplikacja. Widok DOM jest wykorzystywany do kontroli krzyżowej, nie do masowej ekstrakcji.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./approach.html#zalety" class="text-indigo-700 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-900">approach.html — Zalety i wady</a></p>
+        </article>
+
+        <article id="p7" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">P7</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Skąd pewność, że dane z punktu końcowego zgadzają się z interfejsem?</h3>
+            </div>
+            <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">Technika</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Nie ma pewności bez sprawdzenia — dlatego jest pilot 5–10 encji, który porównuje oba źródła. Jeśli dane się rozjeżdżają, raport to pokazuje, zamiast zakładać zgodność. To jedna z bramek jakościowych planu.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./approach.html#kontekst" class="text-indigo-700 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-900">approach.html — Kontekst</a></p>
+        </article>
+
+        <article id="p8" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">P8</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co jeśli wewnętrzny punkt końcowy zmieni format?</h3>
+            </div>
+            <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">Technika</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Walidacja schematu zatrzymuje przebieg z czytelnym błędem, zamiast tworzyć puste zbiory i fałszywe wyniki. Wersja kontraktu jest zapisywana w raporcie, a wariant awaryjny oparty na DOM ogranicza skutki zmian.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./data-contract.html#wersje" class="text-indigo-700 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-900">data-contract.html — Wersjonowanie</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 03. Dane -->
+    <section id="dane" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">03</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Dane</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Co, jeśli dane wejściowe są problemem?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Najwięcej sporów powstaje nie przy kodzie, lecz przy interpretacji CSV. Odpowiedzi muszą być konkretne, bo od nich zależy, czy wynik będzie wiarygodny.
+      </p>
+
+      <div class="mt-8 space-y-4">
+        <article id="p9" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P9</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co jeśli CSV jest błędny albo nieaktualny?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Dane</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Audyt wejścia wykrywa duplikaty, konflikty, nieznane identyfikatory i puste wartości, zanim ruszy porównanie. Sprzeczne dane wstrzymują encję do decyzji właściciela — narzędzie nie zgaduje, która wartość jest „nowsza”.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./data-contract.html#brzegowe" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">data-contract.html — Przypadki brzegowe</a></p>
+        </article>
+
+        <article id="p10" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P10</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co oznacza pusta komórka w CSV?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Dane</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Puste pole oznacza, że atrybut istnieje i ma być pusty. Brak wiersza oznacza, że atrybut nie jest weryfikowany. Kontrakt rozróżnia te dwa stany, bo ich połączenie prowadzi do fałszywych zgodności.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./data-contract.html#normalizacja" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">data-contract.html — Normalizacja</a></p>
+        </article>
+
+        <article id="p11" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P11</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Jak identyfikujecie encje i atrybuty?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Dane</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Po stabilnych identyfikatorach technicznych, nie po etykietach z interfejsu. Jeśli aplikacja używa innych nazw, istnieje jawny słownik mapowania. Dzięki temu tłumaczenia i zmiany tekstów nie tworzą fałszywych różnic.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./data-contract.html#mapowanie" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">data-contract.html — Mapowanie</a></p>
+        </article>
+
+        <article id="p12" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">P12</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co z duplikatami i konfliktami w CSV?</h3>
+            </div>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Dane</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Identyczne duplikaty dają ostrzeżenie i są liczone raz. Różne wartości dla tego samego atrybutu to konflikt: encja zostaje wstrzymana, a raport wskazuje oba wiersze i wymaga decyzji właściciela danych.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./data-contract.html#wyniki" class="text-violet-700 underline decoration-violet-300 underline-offset-4 hover:text-violet-900">data-contract.html — Tabela decyzyjna</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 04. Bezpieczeństwo -->
+    <section id="bezpieczenstwo" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">04</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Bezpieczeństwo</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Czy coś może pójść nie tak?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Pytania o bezpieczeństwo trzeba traktować poważnie, nie odpowiadać „to tylko odczyt”. Odpowiedź musi obejmować uprawnienia, dane wrażliwe i zachowanie przy utracie sesji.
+      </p>
+
+      <div class="mt-8 space-y-4">
+        <article id="p13" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">P13</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Czy to bezpieczne? Ktoś może przypadkiem zapisać dane?</h3>
+            </div>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Bezpieczeństwo</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Przebieg jest wyłącznie odczytowy: konto o minimalnych uprawnieniach, blokada operacji zapisu, ograniczenie tempa i redakcja poświadczeń w logach. Narzędzie nie wykonuje żadnej operacji modyfikującej dane.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./approach.html#bezpieczenstwo" class="text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900">approach.html — Bezpieczeństwo</a></p>
+        </article>
+
+        <article id="p14" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">P14</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co z danymi wrażliwymi?</h3>
+            </div>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Bezpieczeństwo</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Zakres obejmuje tylko encje potrzebne do weryfikacji. Dowody są przechowywane zgodnie z polityką danych, a poświadczenia nie trafiają do raportu. Jeśli dane są wrażliwe, przed startem potrzebna jest zgoda i decyzja o anonimizacji.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./brief.html#ryzyka" class="text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900">brief.html — Ryzyka</a></p>
+        </article>
+
+        <article id="p15" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">P15</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co jeśli sesja wygaśnie w trakcie?</h3>
+            </div>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Bezpieczeństwo</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Narzędzie wykrywa przekierowanie na logowanie, przerywa lub kontrolowanie ponawia przebieg. Wygasła sesja nigdy nie może zakończyć się fałszywym wynikiem „zgodna” — to jedna z bramek jakości.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./mvp.html#powinno" class="text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900">mvp.html — Powinno mieć</a></p>
+        </article>
+
+        <article id="p16" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">P16</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Kto ma dostęp do wyników?</h3>
+            </div>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Bezpieczeństwo</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Osoby wskazane przez lidera: zespół danych, testy i opiekun starszej aplikacji. Raport nie zawiera poświadczeń ani pełnych odpowiedzi z danymi wrażliwymi — tylko dowody potrzebne do wyjaśnienia różnic.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./brief.html#decyzje" class="text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900">brief.html — Decyzje</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 05. Plan -->
+    <section id="plan" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">05</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Plan i koszt</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Ile to potrwa i czy jedna osoba wystarczy?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Plan zakłada jednego dewelopera. Odpowiedzi muszą być szczere: pokazać, co jest realne, gdzie jest bufor i czego nie da się obiecać bez dostępu do środowiska.
+      </p>
+
+      <div class="mt-8 space-y-4">
+        <article id="p17" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">P17</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Ile to potrwa?</h3>
+            </div>
+            <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">Plan</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            13 dni bazowych i 2 dni bufora dla jednego dewelopera na pełnym etacie, czyli 13–15 dni roboczych. Przy alokacji 50% czas kalendarzowy rośnie do 26–30 dni. To estymacja wstępna, potwierdzana po odkryciu.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./plan.html#plan" class="text-sky-700 underline decoration-sky-300 underline-offset-4 hover:text-sky-900">plan.html — Plan dni</a></p>
+        </article>
+
+        <article id="p18" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">P18</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Czy jeden deweloper wystarczy?</h3>
+            </div>
+            <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">Plan</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Dla MVP tak, bo praca jest sekwencyjna, a zakres zamknięty. Wąskim gardłem jest dostęp do środowiska i decyzje właściciela danych, nie liczba rąk. Druga osoba nie skróci etapów, jeśli pierwsza czeka na dane.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./plan.html#zalozenia" class="text-sky-700 underline decoration-sky-300 underline-offset-4 hover:text-sky-900">plan.html — Założenia</a></p>
+        </article>
+
+        <article id="p19" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">P19</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co jeśli deweloper zachoruje?</h3>
+            </div>
+            <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">Plan</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Plan ma bufor, runbook i konfigurację w repozytorium, więc kontekst da się przejąć. To ogranicza ryzyko, ale go nie usuwa — przy jednej osobie zawsze pozostaje ryzyko bus factor 1. Dlatego dokumentacja jest częścią zakresu, nie dodatkiem.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./plan.html#ryzyka" class="text-sky-700 underline decoration-sky-300 underline-offset-4 hover:text-sky-900">plan.html — Ryzyka</a></p>
+        </article>
+
+        <article id="p20" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">P20</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Czy potrzebne są nowe licencje lub narzędzia?</h3>
+            </div>
+            <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">Plan</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Nie przewidujemy nowych licencji. Narzędzie korzysta z istniejącej sesji i bibliotek dostępnych w projekcie. Realny koszt to czas jednego dewelopera oraz czas osób, które zatwierdzają kontrakt i odbierają wynik.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./brief.html#plan" class="text-sky-700 underline decoration-sky-300 underline-offset-4 hover:text-sky-900">brief.html — Plan</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 06. Ryzyko -->
+    <section id="ryzyko" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">06</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Ryzyko i dalsze kroki</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Co jeśli coś nie wyjdzie?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Ostatnia grupa pytań dotyczy tego, co się stanie po pilocie i kto odpowiada za utrzymanie. To pytania, które decydują o tym, czy projekt nie skończy się „raportem na dysku”.
+      </p>
+
+      <div class="mt-8 space-y-4">
+        <article id="p21" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">P21</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Jak zmierzymy sukces?</h3>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Ryzyko</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Czterema liczbami: 100% encji z CSV ma wynik, 0 operacji zapisu, 100% rozbieżności ma dowód, a pilot 5–10 encji został potwierdzony w widoku DOM. Sukces nie oznacza „zero różnic” — oznacza pełną widoczność różnic.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./brief.html#cel" class="text-rose-700 underline decoration-rose-300 underline-offset-4 hover:text-rose-900">brief.html — Cel i mierniki</a></p>
+        </article>
+
+        <article id="p22" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">P22</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co jeśli wyniki się nie zgodzą z oczekiwaniami?</h3>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Ryzyko</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            To jest oczekiwane. Raport ma pokazać różnice, a nie je ukryć. Każda niezgodność dostaje kategorię — CSV, mapowanie, aplikacja lub problem techniczny — oraz właściciela do dalszej analizy.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./mvp.html#powinno" class="text-rose-700 underline decoration-rose-300 underline-offset-4 hover:text-rose-900">mvp.html — Klasyfikacja rozbieżności</a></p>
+        </article>
+
+        <article id="p23" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">P23</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Co dalej po pilocie?</h3>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Ryzyko</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Po potwierdzeniu zgodności z widokiem DOM uruchamiamy pełny przebieg na wszystkich encjach, przekazujemy raport i klasyfikację różnic. Dopiero potem zapadają decyzje o rozszerzeniach, takich jak raport HTML czy przebiegi przyrostowe.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./plan.html#rekomendacja" class="text-rose-700 underline decoration-rose-300 underline-offset-4 hover:text-rose-900">plan.html — Rekomendacja</a></p>
+        </article>
+
+        <article id="p24" class="section-anchor rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-4">
+              <span class="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">P24</span>
+              <h3 class="text-lg font-extrabold text-slate-950">Kto utrzyma narzędzie po projekcie?</h3>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Ryzyko</span>
+          </div>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Po odbiorze utrzymanie przejmuje ops lub bezpieczeństwo, a właściciel danych odpowiada za aktualność CSV. Wskazanie tych osób jest warunkiem odbioru — bez tego narzędzie zostaje bez opiekuna.
+          </p>
+          <p class="mt-4 text-xs font-semibold text-slate-500">Źródło: <a href="./plan.html#role" class="text-rose-700 underline decoration-rose-300 underline-offset-4 hover:text-rose-900">plan.html — Role</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 07. Pytania do lidera -->
+    <section id="lider" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">07</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Pytania do lidera</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">O co powinien zapytać deweloper?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Rozmowa nie jest jednostronna. Te cztery pytania trzeba zadać przed startem, bo ich brak odpowiedzi oznacza, że plan nie ma podstawy.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <article class="rounded-3xl border border-violet-200 bg-white p-6 shadow-sm">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">1</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Czy zakres MVP jest zatwierdzony?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Bez akceptacji ośmiu elementów „musi mieć” nie zaczynamy odkrycia.</p>
+        </article>
+
+        <article class="rounded-3xl border border-violet-200 bg-white p-6 shadow-sm">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">2</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Kto jest właścicielem pliku CSV?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Potrzebna jest osoba, która odpowiada na pytania w ciągu jednego dnia roboczego.</p>
+        </article>
+
+        <article class="rounded-3xl border border-violet-200 bg-white p-6 shadow-sm">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">3</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Czy dostęp będzie gotowy na D1?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Środowisko, konto tylko do odczytu i zgoda na wewnętrzne punkty końcowe.</p>
+        </article>
+
+        <article class="rounded-3xl border border-violet-200 bg-white p-6 shadow-sm">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-xs font-black text-white">4</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Kto zatwierdzi wynik pilotażu?</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Definicja ukończenia i osoba odbierająca muszą być znane przed D13.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-4 rounded-3xl border border-violet-200 bg-violet-50/70 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+        <p class="max-w-3xl text-sm leading-6 text-violet-900">
+          <span class="font-extrabold">Zasada:</span> jeśli któreś z tych pytań nie ma odpowiedzi, nie zaczynamy implementacji. Plan i tak się przesunie — lepiej wiedzieć to przed D1 niż po D10.
+        </p>
+        <a href="./plan.html" class="inline-flex flex-none items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-slate-800">
+          Otwórz plan realizacji
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 08. Dokumenty -->
+    <section id="dokumenty" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-violet-600">08</span>
+        <span class="h-px w-10 bg-violet-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Dokumenty źródłowe</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Pełne uzasadnienia</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Pytania i odpowiedzi są skrótem. Poniższe dokumenty zawierają pełne uzasadnienia, liczby i kryteria, na których opierają się odpowiedzi.
+      </p>
+
+      <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <a href="./brief.html" class="group flex flex-col rounded-[2rem] border border-amber-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-lg">🎯</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-amber-800">Dokument decyzyjny</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Problem, cel, mierniki, plan, ryzyka i decyzje dla lidera.</p>
+          <span class="mt-4 text-sm font-extrabold text-amber-700">Otwórz →</span>
+        </a>
+
+        <a href="./mvp.html" class="group flex flex-col rounded-[2rem] border border-emerald-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-lg">🧩</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-emerald-800">Zakres MVP</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Analiza MoSCoW, definicja ukończenia i założenia.</p>
+          <span class="mt-4 text-sm font-extrabold text-emerald-700">Otwórz →</span>
+        </a>
+
+        <a href="./approach.html" class="group flex flex-col rounded-[2rem] border border-sky-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-lg">🧭</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-sky-800">Podejście techniczne</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Siedem kroków, przepływ danych, bezpieczeństwo i SWOT.</p>
+          <span class="mt-4 text-sm font-extrabold text-sky-700">Otwórz →</span>
+        </a>
+
+        <a href="./data-contract.html" class="group flex flex-col rounded-[2rem] border border-indigo-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-lg">📐</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-indigo-800">Kontrakt danych</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Format CSV, normalizacja, przypadki brzegowe i tabela decyzyjna.</p>
+          <span class="mt-4 text-sm font-extrabold text-indigo-700">Otwórz →</span>
+        </a>
+
+        <a href="./plan.html" class="group flex flex-col rounded-[2rem] border border-cyan-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-cyan-300 hover:shadow-soft md:col-span-2 lg:col-span-2">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-100 text-lg">🗓️</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-cyan-800">Plan realizacji dla jednego dewelopera</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Trzynaście dni bazowych, dwie dni bufora, pięć bramek i zasady reakcji na poślizg.</p>
+          <span class="mt-4 text-sm font-extrabold text-cyan-700">Otwórz →</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white/70">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>Materiał pomocniczy na spotkanie. Pełne uzasadnienia znajdują się w dokumentach źródłowych.</p>
+      <div class="flex flex-wrap gap-4 font-semibold text-slate-700">
+        <a href="./brief.html" class="transition hover:text-slate-950">Decyzja</a>
+        <a href="./plan.html" class="transition hover:text-slate-950">Plan</a>
+        <a href="./data-contract.html" class="transition hover:text-slate-950">Kontrakt</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

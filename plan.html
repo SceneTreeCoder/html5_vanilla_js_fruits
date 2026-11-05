@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan realizacji MVP — jeden deweloper</title>
+  <meta name="description" content="Plan realizacji MVP weryfikacji atrybutów encji dla jednego dewelopera: etapy, dni robocze, bramki, odpowiedzialności, ryzyka i zasady reakcji na poślizg.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+          boxShadow: {
+            soft: "0 24px 60px -20px rgba(15, 23, 42, 0.18)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-feature-settings: "ss01" on;
+    }
+
+    ::selection {
+      background: #bae6fd;
+      color: #0c4a6e;
+    }
+
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+      mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+    }
+
+    .section-anchor {
+      scroll-margin-top: 6rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-sky-200/50 blur-3xl"></div>
+    <div class="absolute -right-32 top-[38rem] h-[28rem] w-[28rem] rounded-full bg-emerald-200/40 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl"></div>
+  </div>
+
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
+      <a href="#gora" class="flex items-center gap-3" aria-label="Przejdź do początku dokumentu">
+        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-900/20">P</span>
+        <span class="hidden sm:block">
+          <span class="block text-sm font-extrabold tracking-tight text-slate-950">Plan realizacji</span>
+          <span class="block text-xs text-slate-500">Jeden deweloper</span>
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-1 rounded-full border border-slate-200 bg-white/70 p-1 text-sm font-semibold text-slate-600 shadow-sm lg:flex" aria-label="Nawigacja główna">
+        <a href="#zalozenia" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Założenia</a>
+        <a href="#plan" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Dni</a>
+        <a href="#bramki" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Bramki</a>
+        <a href="#role" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Role</a>
+        <a href="#ryzyka" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Ryzyka</a>
+        <a href="#poslizg" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Poślizg</a>
+        <a href="#rekomendacja" class="rounded-full bg-slate-950 px-3 py-2 text-white transition hover:bg-slate-800">Rekomendacja</a>
+      </nav>
+
+      <a href="#rekomendacja" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
+        Rekomendacja
+      </a>
+    </div>
+  </header>
+
+  <main id="gora" class="mx-auto max-w-7xl px-6 pb-24">
+
+    <!-- Sekcja powitalna -->
+    <section class="pt-10">
+      <div class="relative overflow-hidden rounded-[2.5rem] bg-slate-950 px-7 py-12 shadow-2xl shadow-slate-900/25 sm:px-12 lg:px-16 lg:py-16">
+        <div class="hero-grid absolute inset-0" aria-hidden="true"></div>
+        <div class="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-sky-500/25 blur-3xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-emerald-400/20 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-sky-200">
+              <span class="h-2 w-2 rounded-full bg-sky-400"></span>
+              Plan realizacji · jedna osoba
+            </span>
+
+            <h1 class="mt-7 text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Plan MVP dla
+              <span class="block bg-gradient-to-r from-sky-300 via-cyan-200 to-emerald-300 bg-clip-text text-transparent">
+                jednego dewelopera
+              </span>
+            </h1>
+
+            <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+              Praca sekwencyjna, jedno zadanie w toku i bramka po każdym etapie. Plan zakłada jednego dewelopera na pełnym etacie, bez równoległych ścieżek i bez ukrytej pracy zespołu.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">👤</span> 1 deweloper
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">📅</span> 13 dni bazowo
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🛟</span> 2 dni bufora
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🚧</span> 5 bramek
+              </span>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-8">
+            <div class="flex items-center justify-between gap-4">
+              <h2 class="text-lg font-extrabold text-white">Plan w jednym zdaniu</h2>
+              <span class="rounded-full bg-sky-400/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-300">Założenie</span>
+            </div>
+
+            <p class="mt-5 text-base leading-7 text-slate-200">
+              Jeden deweloper przechodzi pięć etapów po kolei, zamyka każdy bramką i dopiero po potwierdzeniu pilotażu uruchamia pełny przebieg.
+            </p>
+
+            <div class="mt-6 space-y-4 border-t border-white/10 pt-5">
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-sky-400/15 text-xs font-black text-sky-300">1</span>
+                <p class="text-sm leading-6 text-slate-300">100% alokacji dewelopera. Przy 50% czas kalendarzowy rośnie do 26–30 dni.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-sky-400/15 text-xs font-black text-sky-300">2</span>
+                <p class="text-sm leading-6 text-slate-300">Zero równoległości: kod, testy i dokumentacja są wbudowane w dni etapu.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-sky-400/15 text-xs font-black text-sky-300">3</span>
+                <p class="text-sm leading-6 text-slate-300">Dostęp do środowiska i właściciel CSV gotowi przed D1. Inaczej plan się przesuwa.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Założenia -->
+    <section id="zalozenia" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">01</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Założenia</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Na czym opiera się ten plan?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Plan jest realny tylko przy spełnieniu poniższych warunków. Każdy niespełniony punkt przesuwa start albo wydłuża realizację — i musi być jawnie odnotowany, a nie „nadrobiony” po godzinach.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">👤</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Jedna osoba</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Całą implementację, testy i dokumentację wykonuje jeden deweloper. Nie ma drugiej osoby do równoległej pracy.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🕒</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Pełny etat</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">13 dni roboczych przy 100% alokacji. Przy 50% ten sam zakres zajmuje 26–30 dni kalendarzowych.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-xl">🔑</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Dostęp od D1</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Środowisko, konto tylko do odczytu i zgoda na korzystanie z wewnętrznych punktów końcowych są gotowe przed startem.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">📄</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">CSV i właściciel</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Plik CSV jest aktualny, a właściciel danych odpowiada na pytania w ciągu jednego dnia roboczego.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 grid gap-5 lg:grid-cols-2">
+        <div class="rounded-3xl border border-sky-200 bg-sky-50/70 p-6 sm:p-7">
+          <h3 class="text-base font-extrabold text-sky-950">Co wchodzi do planu</h3>
+          <ul class="mt-4 space-y-3 text-sm leading-6 text-sky-900">
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Etapy 1–5 z zakresu MVP, bez oficjalnego API i bez zapisu danych.</li>
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Prace nad kodem, testy i dokumentacja w tych samych dniach.</li>
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Pilotaż 5–10 encji i kontrola krzyżowa z widokiem DOM.</li>
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Przekazanie z runbookiem i finalnym przebiegiem.</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-rose-200 bg-rose-50/70 p-6 sm:p-7">
+          <h3 class="text-base font-extrabold text-rose-950">Czego plan nie obejmuje</h3>
+          <ul class="mt-4 space-y-3 text-sm leading-6 text-rose-900">
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-500"></span>Oficjalnego API i zmian w starszej aplikacji.</li>
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-500"></span>Automatycznego poprawiania danych i monitoringu w czasie rzeczywistym.</li>
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-500"></span>Testów wydajnościowych i pełnej macierzy uprawnień.</li>
+            <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-500"></span>Pracy poza godzinami ani „nadrabiania” poślizgu kosztem jakości.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. Plan dni -->
+    <section id="plan" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">02</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Plan dni</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Trzynaście dni, jedna ścieżka</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Każdy dzień kończy się konkretnym wynikiem. Deweloper nie zaczyna kolejnego zadania, dopóki poprzednie nie jest sprawdzone i zapisane. Dni 14–15 to bufor, nie dodatkowy zakres.
+      </p>
+
+      <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[820px] text-left">
+            <thead class="border-b border-slate-200 bg-slate-50">
+              <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                <th class="px-6 py-4">Dzień</th>
+                <th class="px-6 py-4">Zadanie</th>
+                <th class="px-6 py-4">Wynik dnia</th>
+                <th class="px-6 py-4">Bramka</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
+              <tr class="bg-sky-50/40">
+                <td class="px-6 py-4 font-black text-sky-700" colspan="4">Etap 1 · Odkrycie (D1–D2)</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D1</td>
+                <td class="px-6 py-4">Przechwycenie żądania <code class="text-xs">$.post</code>, opis nagłówków, sesji i formatu odpowiedzi.</td>
+                <td class="px-6 py-4">Notatka techniczna i szkic kontraktu danych.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D2</td>
+                <td class="px-6 py-4">Próbka 2–3 encji, mapowanie identyfikatorów, potwierdzenie z właścicielem CSV.</td>
+                <td class="px-6 py-4">Kontrakt w wersji 0.1 i lista ryzyk.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">G1</span></td>
+              </tr>
+
+              <tr class="bg-emerald-50/40">
+                <td class="px-6 py-4 font-black text-emerald-700" colspan="4">Etap 2 · Rdzeń (D3–D7)</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D3</td>
+                <td class="px-6 py-4">Parser CSV i audyt wejścia: duplikaty, konflikty, nieznane identyfikatory, puste wartości.</td>
+                <td class="px-6 py-4">Raport wejściowy i testy parsera.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D4</td>
+                <td class="px-6 py-4">Odczyt pojedynczej encji przez <code class="text-xs">$.post</code> w kontekście strony.</td>
+                <td class="px-6 py-4">Działający odczyt jednej encji z dowodem.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D5</td>
+                <td class="px-6 py-4">Ekstrakcja wsadowa, pamięć podręczna surowych odpowiedzi, obsługa błędów transportu.</td>
+                <td class="px-6 py-4">Powtarzalny przebieg na próbce bez ręcznego klikania.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D6</td>
+                <td class="px-6 py-4">Normalizacja wartości i silnik porównania według tabeli decyzyjnej.</td>
+                <td class="px-6 py-4">Wynik zgodna / niezgodna / błąd dla każdej encji.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D7</td>
+                <td class="px-6 py-4">Test referencyjny na trzech encjach z kontraktu danych i poprawki.</td>
+                <td class="px-6 py-4">Fixture przechodzi bez różnic; zero operacji zapisu.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">G2</span></td>
+              </tr>
+
+              <tr class="bg-cyan-50/40">
+                <td class="px-6 py-4 font-black text-cyan-700" colspan="4">Etap 3 · Raport (D8–D9)</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D8</td>
+                <td class="px-6 py-4">Raport maszynowy JSON/CSV oraz czytelne podsumowanie dla człowieka.</td>
+                <td class="px-6 py-4">Raport z liczbami, wynikami i listą różnic.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D9</td>
+                <td class="px-6 py-4">Klasyfikacja różnic, metadane przebiegu, wersja kontraktu i suma kontrolna CSV.</td>
+                <td class="px-6 py-4">Raport audytowalny i przypisany do danych wejściowych.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-800">G3</span></td>
+              </tr>
+
+              <tr class="bg-amber-50/40">
+                <td class="px-6 py-4 font-black text-amber-700" colspan="4">Etap 4 · Pilot (D10–D11)</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D10</td>
+                <td class="px-6 py-4">Pilotaż 5 encji i kontrola krzyżowa danych z widokiem DOM.</td>
+                <td class="px-6 py-4">Lista rozbieżności JSON vs DOM lub potwierdzenie zgodności.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D11</td>
+                <td class="px-6 py-4">Pilotaż 10 encji, poprawki i ponowny przebieg po zmianach.</td>
+                <td class="px-6 py-4">Stabilny wynik na próbce 5–10 encji.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">G4</span></td>
+              </tr>
+
+              <tr class="bg-indigo-50/40">
+                <td class="px-6 py-4 font-black text-indigo-700" colspan="4">Etap 5 · Odbiór (D12–D13)</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D12</td>
+                <td class="px-6 py-4">Dokumentacja, runbook uruchomienia i opis ograniczeń.</td>
+                <td class="px-6 py-4">Instrukcja pozwalająca powtórzyć przebieg bez autora.</td>
+                <td class="px-6 py-4 text-slate-400">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D13</td>
+                <td class="px-6 py-4">Odbiór z liderem i właścicielem danych, finalny przebieg na pełnym CSV.</td>
+                <td class="px-6 py-4">Potwierdzenie definicji ukończenia i przekazanie.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-800">G5</span></td>
+              </tr>
+
+              <tr class="bg-slate-100/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D14–D15</td>
+                <td class="px-6 py-4">Bufor na opóźnienie dostępu, poprawki po odbiorze i nieprzewidziane problemy.</td>
+                <td class="px-6 py-4">Wykorzystany tylko w razie potrzeby; niewykorzystany zamyka projekt wcześniej.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-slate-200 px-3 py-1 text-xs font-bold text-slate-700">Bufor</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Odkrycie</p>
+          <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
+          <p class="mt-1 text-xs leading-5 text-slate-500">Kontrakt, próbka, ryzyka</p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Rdzeń</p>
+          <p class="mt-2 text-2xl font-black text-slate-950">5 dni</p>
+          <p class="mt-1 text-xs leading-5 text-slate-500">Parser, odczyt, porównanie</p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-cyan-600">Raport</p>
+          <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
+          <p class="mt-1 text-xs leading-5 text-slate-500">Wyniki, dowody, metadane</p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-amber-600">Pilot</p>
+          <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
+          <p class="mt-1 text-xs leading-5 text-slate-500">DOM, poprawki, powtórka</p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Odbiór</p>
+          <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
+          <p class="mt-1 text-xs leading-5 text-slate-500">Dokumentacja, finalny przebieg</p>
+        </div>
+      </div>
+
+      <p class="mt-4 text-xs leading-5 text-slate-500">
+        Suma bazowa: 13 dni. Bufor: 2 dni. Widełki: 13–15 dni roboczych. Wariant 10-dniowy jest możliwy tylko wtedy, gdy parser CSV i raport tekstowy są już dostępne — w przeciwnym razie grozi to skróceniem testów, a nie realnym przyspieszeniem.
+      </p>
+    </section>
+
+    <!-- 03. Bramki -->
+    <section id="bramki" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">03</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Bramki</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Pięć punktów, w których trzeba się zatrzymać</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Bramka nie jest formalnością. Jeśli kryterium nie jest spełnione, deweloper nie przechodzi dalej — poprawia etap albo eskaluje decyzję do lidera.
+      </p>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">G1</span>
+            <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">po D2</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950">Kontrakt i próbka</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Kontrakt 0.1 istnieje, 2–3 encje są pobrane, a mapowanie identyfikatorów potwierdzone przez właściciela danych.</p>
+        </article>
+
+        <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">G2</span>
+            <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">po D7</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950">Rdzeń działa na fixture</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Przykład referencyjny z kontraktu przechodzi bez różnic, a przebieg nie wykonuje żadnej operacji zapisu.</p>
+        </article>
+
+        <article class="rounded-3xl border border-cyan-200 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-600 text-xs font-black text-white">G3</span>
+            <span class="rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-800">po D9</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950">Raport jest audytowalny</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Każdy wynik ma dowód, wersję kontraktu i sumę kontrolną CSV. Raport można pokazać osobie trzeciej.</p>
+        </article>
+
+        <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">G4</span>
+            <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">po D11</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950">Pilot potwierdza DOM</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">5–10 encji nie wykazuje nieuzasadnionych różnic między punktem końcowym a widokiem interfejsu.</p>
+        </article>
+
+        <article class="rounded-3xl border border-indigo-200 bg-white p-6 shadow-sm md:col-span-2">
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">G5</span>
+            <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-800">po D13</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950">Odbiór i przekazanie</h3>
+          <p class="mt-2 max-w-4xl text-sm leading-6 text-slate-600">Definicja ukończenia jest spełniona, dokumentacja pozwala powtórzyć przebieg bez autora, a lider i właściciel danych zatwierdzają wynik.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 04. Role -->
+    <section id="role" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">04</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Role</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Jedna osoba implementuje, kilka osób odblokowuje</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        „Jeden deweloper” nie znaczy „nikt inny nie jest potrzebny”. Deweloper odpowiada za całość implementacji, ale dostęp, dane i akceptację zapewniają inne role — w określonych momentach.
+      </p>
+
+      <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[860px] text-left">
+            <thead class="border-b border-slate-200 bg-slate-50">
+              <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                <th class="px-6 py-4">Aktywność</th>
+                <th class="px-6 py-4">Deweloper</th>
+                <th class="px-6 py-4">Lider</th>
+                <th class="px-6 py-4">Właściciel danych</th>
+                <th class="px-6 py-4">Bezpieczeństwo / ops</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Zatwierdzenie zakresu</td>
+                <td class="px-6 py-4">Konsultuje</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Decyduje</span></td>
+                <td class="px-6 py-4">Konsultuje</td>
+                <td class="px-6 py-4">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Dostęp do środowiska</td>
+                <td class="px-6 py-4">Wykorzystuje</td>
+                <td class="px-6 py-4">Zatwierdza</td>
+                <td class="px-6 py-4">—</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Zapewnia</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Kontrakt danych</td>
+                <td class="px-6 py-4">Przygotowuje</td>
+                <td class="px-6 py-4">Akceptuje</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Zatwierdza</span></td>
+                <td class="px-6 py-4">Konsultuje</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Implementacja i testy</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Wykonuje</span></td>
+                <td class="px-6 py-4">Nadzoruje</td>
+                <td class="px-6 py-4">—</td>
+                <td class="px-6 py-4">Konsultuje</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Pilot i kontrola DOM</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Wykonuje</span></td>
+                <td class="px-6 py-4">Obserwuje</td>
+                <td class="px-6 py-4">Weryfikuje dane</td>
+                <td class="px-6 py-4">—</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Odbiór</td>
+                <td class="px-6 py-4">Demonstruje</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Decyduje</span></td>
+                <td class="px-6 py-4">Potwierdza dane</td>
+                <td class="px-6 py-4">Potwierdza zgodność</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Utrzymanie po pilocie</td>
+                <td class="px-6 py-4">Przekazuje</td>
+                <td class="px-6 py-4">Wskazuje właściciela</td>
+                <td class="px-6 py-4">Korzysta</td>
+                <td class="px-6 py-4"><span class="font-bold text-sky-700">Przejmuje</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Deweloper</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Implementacja, testy, dokumentacja, kontakt techniczny. Jedna osoba, pełna odpowiedzialność za wykonanie.</p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Lider</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Zakres, priorytety, decyzje, odbiór. Jeden punkt eskalacji, nie codzienny nadzór.</p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Właściciel danych</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Aktualność CSV, odpowiedzi na pytania kontraktowe, klasyfikacja różnic biznesowych.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05. Ryzyka -->
+    <section id="ryzyka" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">05</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Ryzyka</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Ryzyka specyficzne dla jednej osoby</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Przy jednym deweloperze największym ryzykiem nie jest technologia, lecz dostępność tej osoby i brak równoległego wsparcia. Dlatego plan ma bufor, dokumentację i zasadę jednego zadania w toku.
+      </p>
+
+      <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[900px] text-left">
+            <thead class="border-b border-slate-200 bg-slate-50">
+              <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                <th class="px-6 py-4">Ryzyko</th>
+                <th class="px-6 py-4">Wpływ na plan</th>
+                <th class="px-6 py-4">Ograniczenie</th>
+                <th class="px-6 py-4">Reakcja</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Opóźnienie dostępu do środowiska</td>
+                <td class="px-6 py-4">+2–5 dni</td>
+                <td class="px-6 py-4">Dostęp jako warunek startu przed D1; wniosek złożony w dniu decyzji.</td>
+                <td class="px-6 py-4">Nie zaczynamy D1; eskalujemy do lidera.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Absencja dewelopera</td>
+                <td class="px-6 py-4">+3–5 dni</td>
+                <td class="px-6 py-4">Runbook, konfiguracja w repozytorium, brak ręcznych kroków, dostęp w sejfie.</td>
+                <td class="px-6 py-4">Wykorzystanie bufora; przekazanie kontekstu osobie technicznej.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Zmiana formatu punktu końcowego</td>
+                <td class="px-6 py-4">+1–3 dni</td>
+                <td class="px-6 py-4">Walidacja schematu, wersja kontraktu, wariant awaryjny DOM.</td>
+                <td class="px-6 py-4">Zatrzymanie przebiegu zamiast cichych błędów.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Konflikt lub braki w CSV</td>
+                <td class="px-6 py-4">+1–2 dni</td>
+                <td class="px-6 py-4">Audyt wejścia na D3 i właściciel danych z czasem odpowiedzi do 1 dnia.</td>
+                <td class="px-6 py-4">Wstrzymanie porównania do decyzji właściciela.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Rozszerzanie zakresu</td>
+                <td class="px-6 py-4">+2 dni i więcej</td>
+                <td class="px-6 py-4">Zakres MVP zamknięty; nowe pomysły trafiają do listy „później”.</td>
+                <td class="px-6 py-4">Ponowna estymacja, nie „dopisanie na końcu”.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-semibold text-slate-900">Opóźniony przegląd lub odbiór</td>
+                <td class="px-6 py-4">+1 dzień na bramkę</td>
+                <td class="px-6 py-4">Terminy bramek ustalone z liderem przed startem; przegląd asynchroniczny.</td>
+                <td class="px-6 py-4">Deweloper przechodzi do bufora lub dokumentacji, nie czeka bezczynnie.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. Poślizg -->
+    <section id="poslizg" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">06</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Poślizg</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Co robimy, gdy plan się nie domyka?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Poślizg nie jest porażką, jeśli reakcja jest wcześniej ustalona. Kolejność cięcia zakresu jest sztywna: najpierw elementy opcjonalne, potem ważne, nigdy krytyczne.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-3xl border border-emerald-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Krok 1</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Włącz bufor</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Dni 14–15 są na to przeznaczone. Nie przenosimy ich na nowe funkcje.</p>
+        </article>
+        <article class="rounded-3xl border border-amber-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-amber-600">Krok 2</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Odetnij „może mieć”</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Raport HTML, równoległość, historia i powiadomienia wypadają pierwsze.</p>
+        </article>
+        <article class="rounded-3xl border border-orange-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-orange-600">Krok 3</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Uprość „powinno mieć”</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Pamięć podręczna, metadane i klasyfikacja mogą poczekać, jeśli blokują odbiór.</p>
+        </article>
+        <article class="rounded-3xl border border-rose-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-rose-600">Krok 4</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Eskaluj, nie improwizuj</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Po dwóch dniach poślizgu lider decyduje: nowa data, mniejszy zakres lub większa alokacja.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 rounded-3xl border border-sky-200 bg-sky-50/70 p-6 sm:p-7">
+        <h3 class="text-base font-extrabold text-sky-950">Czego nie wolno ciąć</h3>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Kontroli krzyżowej z widokiem DOM.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Zabezpieczeń trybu tylko do odczytu.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Dowodów i metadanych raportu.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Audytu pliku CSV przed porównaniem.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07. Status -->
+    <section id="status" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">07</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rytm pracy</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Minimalny rytm raportowania</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Przy jednej osobie każda godzina spotkań to godzina nieimplementowana. Rytm jest celowo lekki: krótka notatka dzienna i jedna strona tygodniowo.
+      </p>
+
+      <div class="mt-8 grid gap-5 md:grid-cols-3">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">📝</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Notatka dzienna</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Trzy linie: co zostało zrobione, co jest następne, co blokuje. Bez spotkania, w uzgodnionym kanale.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">📊</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Podsumowanie tygodniowe</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Jedna strona: postęp wobec bramek, zużyty bufor, ryzyka i decyzje potrzebne od lidera.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">🚦</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Eskalacja</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Blokada dłuższa niż jeden dzień trafia do lidera tego samego dnia. Deweloper nie czeka w ciszy.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 08. Rekomendacja -->
+    <section id="rekomendacja" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">08</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rekomendacja</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Rekomendacja planu</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Zatwierdź 13 dni bazowych i 2 dni bufora dla jednego dewelopera na pełnym etacie. Pierwsza decyzja to nie start kodowania, lecz zapewnienie dostępu i właściciela CSV — bez nich plan nie ma podstawy.
+      </p>
+
+      <div class="mt-8 overflow-hidden rounded-[2rem] bg-slate-950 p-7 shadow-xl shadow-slate-900/20 sm:p-9">
+        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+          <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
+            <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-sky-400/15 text-2xl">🗓️</span>
+            <div>
+              <h3 class="text-xl font-extrabold text-white">Pierwszy krok: odblokować D1</h3>
+              <p class="mt-2 max-w-2xl text-base leading-7 text-slate-300">
+                Przed startem muszą być gotowe trzy rzeczy: zatwierdzony zakres, konto tylko do odczytu oraz wskazany właściciel CSV. Dopiero wtedy uruchamiamy odkrycie.
+              </p>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="rounded-full bg-sky-400/15 px-3 py-1 text-xs font-bold text-sky-300">1 deweloper</span>
+                <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-300">13 + 2 dni</span>
+                <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-300">5 bramek</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-emerald-300">Warunek powodzenia</p>
+            <p class="mt-2 text-sm leading-6 text-slate-200">
+              Jeden deweloper nie znaczy „wszystko sam”. Dostęp, dane i akceptacja muszą przyjść wtedy, gdy plan tego wymaga.
+            </p>
+            <a href="./brief.html" class="mt-4 inline-flex items-center gap-2 text-xs font-extrabold text-white transition hover:text-sky-200">
+              Wróć do dokumentu decyzyjnego
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6">
+          <h3 class="text-base font-extrabold text-emerald-950">Co daje ten plan</h3>
+          <p class="mt-2 text-sm leading-6 text-emerald-900">Realistyczny harmonogram bez ukrytej równoległości, jasne bramki i wbudowany bufor na typowe opóźnienia.</p>
+        </div>
+        <div class="rounded-3xl border border-rose-200 bg-rose-50/70 p-6">
+          <h3 class="text-base font-extrabold text-rose-950">Czego nie obiecuje</h3>
+          <p class="mt-2 text-sm leading-6 text-rose-900">Nie gwarantuje terminu bez dostępu i decyzji właściciela danych. Nie zastępuje też testów wydajnościowych ani oficjalnego API.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09. Dokumenty -->
+    <section id="dokumenty" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-sky-600">09</span>
+        <span class="h-px w-10 bg-sky-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Dokumenty powiązane</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Kontekst planu</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Plan rozwija sekcję „Plan” z dokumentu decyzyjnego. Zakres, podejście i kontrakt danych pozostają źródłem prawdy dla treści technicznej.
+      </p>
+
+      <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <a href="./brief.html" class="group flex flex-col rounded-[2rem] border border-amber-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-lg">🎯</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-amber-800">Dokument decyzyjny</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Problem, cel, decyzje i rekomendacja dla lidera.</p>
+          <span class="mt-4 text-sm font-extrabold text-amber-700">Otwórz →</span>
+        </a>
+
+        <a href="./mvp.html" class="group flex flex-col rounded-[2rem] border border-emerald-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-lg">🧩</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-emerald-800">Zakres MVP</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Analiza MoSCoW, definicja ukończenia i założenia.</p>
+          <span class="mt-4 text-sm font-extrabold text-emerald-700">Otwórz →</span>
+        </a>
+
+        <a href="./approach.html" class="group flex flex-col rounded-[2rem] border border-sky-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-lg">🧭</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-sky-800">Podejście techniczne</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Siedem kroków, bezpieczeństwo, ryzyka i SWOT.</p>
+          <span class="mt-4 text-sm font-extrabold text-sky-700">Otwórz →</span>
+        </a>
+
+        <a href="./data-contract.html" class="group flex flex-col rounded-[2rem] border border-indigo-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-lg">📐</span>
+          <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-indigo-800">Kontrakt danych</h3>
+          <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Format CSV, normalizacja i przypadki brzegowe.</p>
+          <span class="mt-4 text-sm font-extrabold text-indigo-700">Otwórz →</span>
+        </a>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-4 rounded-3xl border border-sky-200 bg-sky-50/70 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+        <p class="max-w-3xl text-sm leading-6 text-sky-900">
+          <span class="font-extrabold">Pytania i obiekcje:</span> odpowiedzi na najczęstsze pytania lidera znajdują się w osobnym dokumencie, gotowym na spotkanie.
+        </p>
+        <a href="./q-and-a.html" class="inline-flex flex-none items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-slate-800">
+          Otwórz pytania i odpowiedzi
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white/70">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>Plan zakłada jednego dewelopera na pełnym etacie. Estymacja wymaga potwierdzenia po etapie odkrycia.</p>
+      <div class="flex flex-wrap gap-4 font-semibold text-slate-700">
+        <a href="./brief.html" class="transition hover:text-slate-950">Decyzja</a>
+        <a href="./mvp.html" class="transition hover:text-slate-950">Zakres</a>
+        <a href="./data-contract.html" class="transition hover:text-slate-950">Kontrakt</a>
+        <a href="./q-and-a.html" class="transition hover:text-slate-950">Pytania</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
