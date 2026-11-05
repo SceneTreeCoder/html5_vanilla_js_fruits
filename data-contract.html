@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kontrakt danych CSV — encje i atrybuty</title>
   <meta name="description" content="Kontrakt danych dla weryfikacji atrybutów encji: format pliku CSV, mapowanie na aplikację, reguły normalizacji, przypadki brzegowe i tabela decyzyjna wyników.">
+  <meta property="og:title" content="Kontrakt danych CSV — encje i atrybuty">
+  <meta property="og:description" content="Kontrakt danych dla weryfikacji atrybutów encji: format pliku CSV, mapowanie na aplikację, reguły normalizacji, przypadki brzegowe i tabela decyzyjna wyników.">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pl_PL">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="document-version" content="1.0">
+  <meta name="document-date" content="2026-11-05">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='68' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3ED%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -50,12 +58,95 @@
       scroll-margin-top: 6rem;
     }
 
+    summary {
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
     pre {
       font-variant-ligatures: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid #1d4ed8;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 5px #ffffff;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media print {
+      header,
+      footer,
+      .mobile-menu,
+      .pointer-events-none {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      main {
+        max-width: none !important;
+        padding: 0 !important;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+
+      .bg-slate-950,
+      .bg-slate-900 {
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      .bg-slate-950 *,
+      .bg-slate-900 * {
+        color: #0f172a !important;
+      }
+
+      main .text-transparent {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+      }
+
+      main .bg-clip-text {
+        background: none !important;
+      }
+
+      a {
+        color: #0f172a !important;
+        text-decoration: underline;
+      }
+
+      table {
+        font-size: 11px;
+      }
     }
   </style>
 </head>
 <body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <a href="#gora" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-slate-950 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white">Przejdź do treści</a>
 
   <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
     <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-indigo-200/50 blur-3xl"></div>
@@ -83,9 +174,37 @@
         <a href="#pytania" class="rounded-full bg-slate-950 px-3 py-2 text-white transition hover:bg-slate-800">Pytania</a>
       </nav>
 
-      <a href="#pytania" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
-        Pytania
-      </a>
+      <details class="mobile-menu relative lg:hidden">
+        <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800">
+          Menu
+          <span aria-hidden="true">▾</span>
+        </summary>
+        <div class="absolute right-0 z-50 mt-3 max-h-[calc(100vh-6rem)] w-72 overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
+          <p class="px-2 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Sekcje</p>
+          <div class="mt-2 grid grid-cols-2 gap-1">
+            <a href="#kontekst" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Kontekst</a>
+            <a href="#slownik" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Słownik</a>
+            <a href="#format" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Format</a>
+            <a href="#mapowanie" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Mapowanie</a>
+            <a href="#normalizacja" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Normalizacja</a>
+            <a href="#brzegowe" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Brzegowe</a>
+            <a href="#wyniki" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Wyniki</a>
+            <a href="#przyklad" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Przykład</a>
+            <a href="#pytania" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Pytania</a>
+            <a href="#wersje" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Wersje</a>
+          </div>
+          <p class="mt-4 border-t border-slate-100 px-2 pt-4 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Dokumenty</p>
+          <div class="mt-2 grid gap-1">
+            <a href="./brief.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Dokument decyzyjny</a>
+            <a href="./mvp.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Zakres MVP</a>
+            <a href="./approach.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Podejście</a>
+            <a href="./data-contract.html" class="rounded-xl bg-slate-100 px-2 py-2 text-sm font-semibold text-slate-950">Kontrakt danych</a>
+            <a href="./plan.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Plan realizacji</a>
+            <a href="./q-and-a.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Pytania i odpowiedzi</a>
+            <a href="./docs.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Wszystkie dokumenty</a>
+          </div>
+        </div>
+      </details>
     </div>
   </header>
 
@@ -118,16 +237,16 @@
 
             <div class="mt-8 flex flex-wrap gap-3">
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">📄</span> Jeden wiersz = jedna wartość
+                <span class="text-base" aria-hidden="true">📄</span> Jeden wiersz = jedna wartość
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🆔</span> Stabilne identyfikatory
+                <span class="text-base" aria-hidden="true">🆔</span> Stabilne identyfikatory
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🧮</span> Jawne reguły normalizacji
+                <span class="text-base" aria-hidden="true">🧮</span> Jawne reguły normalizacji
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">📌</span> Wersjonowany kontrakt
+                <span class="text-base" aria-hidden="true">📌</span> Wersjonowany kontrakt
               </span>
             </div>
           </div>
@@ -144,7 +263,7 @@
 
             <div class="mt-6 space-y-4 border-t border-white/10 pt-5">
               <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-400/15 text-xs font-black text-emerald-300">✓</span>
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-400/15 text-xs font-black text-emerald-300" aria-hidden="true">✓</span>
                 <p class="text-sm leading-6 text-slate-300">Format i znaczenie kolumn są zdefiniowane.</p>
               </div>
               <div class="flex items-start gap-3">
@@ -152,7 +271,7 @@
                 <p class="text-sm leading-6 text-slate-300">Reguły normalizacji wymagają potwierdzenia.</p>
               </div>
               <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-rose-400/15 text-xs font-black text-rose-300">×</span>
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-rose-400/15 text-xs font-black text-rose-300" aria-hidden="true">×</span>
                 <p class="text-sm leading-6 text-slate-300">Właściciel CSV nie został wskazany.</p>
               </div>
             </div>
@@ -169,7 +288,7 @@
     <!-- 01. Kontekst -->
     <section id="kontekst" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">01</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">01</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Kontekst</span>
       </div>
@@ -180,25 +299,25 @@
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">📄</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl" aria-hidden="true">📄</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Znaczenie wiersza</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Jeden wiersz to jedna oczekiwana wartość jednego atrybutu jednej encji.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">🆔</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl" aria-hidden="true">🆔</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Tożsamość</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Encja i atrybut są rozpoznawane po stabilnych identyfikatorach, nie po etykietach.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🧮</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl" aria-hidden="true">🧮</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Porównywalność</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Wartości są porównywane po tych samych, jawnych regułach normalizacji.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">📌</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl" aria-hidden="true">📌</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Powtarzalność</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Ten sam plik i ta sama wersja kontraktu dają ten sam raport.</p>
         </article>
@@ -212,7 +331,7 @@
     <!-- 02. Słownik -->
     <section id="slownik" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">02</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">02</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Słownik pojęć</span>
       </div>
@@ -222,13 +341,14 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[720px] text-left">
+            <caption class="sr-only">Wspólny język przed pierwszym przebiegiem</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Pojęcie</th>
-                <th class="px-6 py-4">Znaczenie w kontrakcie</th>
-                <th class="px-6 py-4">Przykład</th>
+                <th scope="col" class="px-6 py-4">Pojęcie</th>
+                <th scope="col" class="px-6 py-4">Znaczenie w kontrakcie</th>
+                <th scope="col" class="px-6 py-4">Przykład</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -271,7 +391,7 @@
     <!-- 03. Format CSV -->
     <section id="format" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">03</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">03</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Format pliku</span>
       </div>
@@ -281,14 +401,15 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[820px] text-left">
+            <caption class="sr-only">Wymagany format pliku CSV</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Kolumna</th>
-                <th class="px-6 py-4">Typ</th>
-                <th class="px-6 py-4">Wymagana</th>
-                <th class="px-6 py-4">Znaczenie</th>
+                <th scope="col" class="px-6 py-4">Kolumna</th>
+                <th scope="col" class="px-6 py-4">Typ</th>
+                <th scope="col" class="px-6 py-4">Wymagana</th>
+                <th scope="col" class="px-6 py-4">Znaczenie</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -371,7 +492,7 @@
     <!-- 04. Mapowanie -->
     <section id="mapowanie" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">04</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">04</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Mapowanie</span>
       </div>
@@ -381,13 +502,14 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[760px] text-left">
+            <caption class="sr-only">Od wiersza CSV do atrybutu w aplikacji</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Pole w CSV</th>
-                <th class="px-6 py-4">Źródło w aplikacji</th>
-                <th class="px-6 py-4">Reguła dopasowania</th>
+                <th scope="col" class="px-6 py-4">Pole w CSV</th>
+                <th scope="col" class="px-6 py-4">Źródło w aplikacji</th>
+                <th scope="col" class="px-6 py-4">Reguła dopasowania</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -429,7 +551,7 @@
     <!-- 05. Normalizacja -->
     <section id="normalizacja" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">05</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">05</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Normalizacja</span>
       </div>
@@ -439,13 +561,14 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[820px] text-left">
+            <caption class="sr-only">Te same reguły dla obu stron porównania</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Obszar</th>
-                <th class="px-6 py-4">Reguła</th>
-                <th class="px-6 py-4">Przykład</th>
+                <th scope="col" class="px-6 py-4">Obszar</th>
+                <th scope="col" class="px-6 py-4">Reguła</th>
+                <th scope="col" class="px-6 py-4">Przykład</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -509,7 +632,7 @@
     <!-- 06. Przypadki brzegowe -->
     <section id="brzegowe" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">06</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">06</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Przypadki brzegowe</span>
       </div>
@@ -521,7 +644,7 @@
       <div class="mt-8 grid gap-4 md:grid-cols-2">
         <article class="rounded-3xl border border-indigo-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">B1</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-700 text-xs font-black text-white">B1</span>
             <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-800">Błąd wejściowy</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Duplikat wiersza</h3>
@@ -531,7 +654,7 @@
 
         <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">B2</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">B2</span>
             <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">Konflikt</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Sprzeczne wartości w CSV</h3>
@@ -541,7 +664,7 @@
 
         <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">B3</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">B3</span>
             <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">Niezgodna</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Encja jest w CSV, nie ma jej w aplikacji</h3>
@@ -561,7 +684,7 @@
 
         <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">B5</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">B5</span>
             <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">Niezgodna</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Atrybut nadmiarowy w aplikacji</h3>
@@ -571,7 +694,7 @@
 
         <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">B6</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">B6</span>
             <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">Błąd mapowania</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Nieznany identyfikator atrybutu</h3>
@@ -581,7 +704,7 @@
 
         <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">B7</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">B7</span>
             <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">Błąd ekstrakcji</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Brak odpowiedzi, wygasła sesja, zły JSON</h3>
@@ -591,7 +714,7 @@
 
         <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">B8</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">B8</span>
             <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">Do potwierdzenia</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Pusta wartość a brak atrybutu</h3>
@@ -604,7 +727,7 @@
     <!-- 07. Tabela decyzyjna -->
     <section id="wyniki" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">07</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">07</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Wyniki</span>
       </div>
@@ -614,14 +737,15 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[880px] text-left">
+            <caption class="sr-only">Tabela decyzyjna wyników</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Warunek</th>
-                <th class="px-6 py-4">Wynik</th>
-                <th class="px-6 py-4">W raporcie</th>
-                <th class="px-6 py-4">Działanie</th>
+                <th scope="col" class="px-6 py-4">Warunek</th>
+                <th scope="col" class="px-6 py-4">Wynik</th>
+                <th scope="col" class="px-6 py-4">W raporcie</th>
+                <th scope="col" class="px-6 py-4">Działanie</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -686,13 +810,13 @@
     <!-- 08. Przykład referencyjny -->
     <section id="przyklad" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">08</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">08</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Przykład</span>
       </div>
-      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Przykład referencyjny dla trzech encji</h2>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Przykład referencyjny i macierz fixture</h2>
       <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
-        Ten przykład służy jako fixture testowy. Narzędzie powinno odtworzyć dokładnie poniższe wyniki na podstawie wcześniejszego pliku CSV.
+        Trzy encje pokazują podstawowe wyniki, a macierz B1–B8 domyka przypadki brzegowe. Narzędzie powinno odtworzyć dokładnie te rezultaty na podstawie wcześniejszego pliku CSV.
       </p>
 
       <div class="mt-8 grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
@@ -700,12 +824,13 @@
           <h3 class="text-base font-extrabold text-slate-950">Dane wejściowe i stan aplikacji</h3>
           <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200">
             <table class="w-full text-left text-sm">
+              <caption class="sr-only">Dane wejściowe i stan aplikacji</caption>
               <thead class="bg-slate-50 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
                 <tr>
-                  <th class="px-4 py-3">Encja</th>
-                  <th class="px-4 py-3">Atrybut</th>
-                  <th class="px-4 py-3">CSV</th>
-                  <th class="px-4 py-3">Aplikacja</th>
+                  <th scope="col" class="px-4 py-3">Encja</th>
+                  <th scope="col" class="px-4 py-3">Atrybut</th>
+                  <th scope="col" class="px-4 py-3">CSV</th>
+                  <th scope="col" class="px-4 py-3">Aplikacja</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-600">
@@ -713,7 +838,7 @@
                 <tr><td class="px-4 py-3 font-semibold text-slate-900">1001</td><td class="px-4 py-3">rozmiar</td><td class="px-4 py-3">M</td><td class="px-4 py-3">M</td></tr>
                 <tr><td class="px-4 py-3 font-semibold text-slate-900">1002</td><td class="px-4 py-3">kolor</td><td class="px-4 py-3">niebieski</td><td class="px-4 py-3">niebieski</td></tr>
                 <tr><td class="px-4 py-3 font-semibold text-slate-900">1002</td><td class="px-4 py-3">rozmiar</td><td class="px-4 py-3">L</td><td class="px-4 py-3">M</td></tr>
-                <tr><td class="px-4 py-3 font-semibold text-slate-900">1003</td><td class="px-4 py-3">kolor</td><td class="px-4 py-3"><span class="italic text-slate-400">puste</span></td><td class="px-4 py-3"><span class="italic text-slate-400">puste</span></td></tr>
+                <tr><td class="px-4 py-3 font-semibold text-slate-900">1003</td><td class="px-4 py-3">kolor</td><td class="px-4 py-3"><span class="italic text-slate-500">puste</span></td><td class="px-4 py-3"><span class="italic text-slate-500">puste</span></td></tr>
                 <tr><td class="px-4 py-3 font-semibold text-slate-900">1003</td><td class="px-4 py-3">rozmiar</td><td class="px-4 py-3">XL</td><td class="px-4 py-3">XL</td></tr>
               </tbody>
             </table>
@@ -725,18 +850,19 @@
           <h3 class="text-base font-extrabold text-slate-950">Oczekiwany raport</h3>
           <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200">
             <table class="w-full text-left text-sm">
+              <caption class="sr-only">Oczekiwany raport</caption>
               <thead class="bg-slate-50 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
                 <tr>
-                  <th class="px-4 py-3">Encja</th>
-                  <th class="px-4 py-3">Wynik</th>
-                  <th class="px-4 py-3">Różnica</th>
+                  <th scope="col" class="px-4 py-3">Encja</th>
+                  <th scope="col" class="px-4 py-3">Wynik</th>
+                  <th scope="col" class="px-4 py-3">Różnica</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-600">
                 <tr>
                   <td class="px-4 py-3 font-semibold text-slate-900">1001</td>
                   <td class="px-4 py-3"><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800">zgodna</span></td>
-                  <td class="px-4 py-3 text-slate-400">—</td>
+                  <td class="px-4 py-3 text-slate-500">—</td>
                 </tr>
                 <tr>
                   <td class="px-4 py-3 font-semibold text-slate-900">1002</td>
@@ -746,7 +872,7 @@
                 <tr>
                   <td class="px-4 py-3 font-semibold text-slate-900">1003</td>
                   <td class="px-4 py-3"><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800">zgodna</span></td>
-                  <td class="px-4 py-3 text-slate-400">—</td>
+                  <td class="px-4 py-3 text-slate-500">—</td>
                 </tr>
               </tbody>
             </table>
@@ -754,12 +880,79 @@
           <p class="mt-3 text-xs leading-5 text-slate-500">Raport zapisuje wersję kontraktu, sumę kontrolną pliku CSV i identyfikator przebiegu.</p>
         </div>
       </div>
+
+      <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
+          <table class="w-full min-w-[760px] text-left">
+            <caption class="sr-only">Macierz fixture B1–B8 i oczekiwane wyniki</caption>
+            <thead class="border-b border-slate-200 bg-slate-50">
+              <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                <th scope="col" class="px-6 py-4">ID</th>
+                <th scope="col" class="px-6 py-4">Przypadek</th>
+                <th scope="col" class="px-6 py-4">Dane wejściowe</th>
+                <th scope="col" class="px-6 py-4">Oczekiwany wynik</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B1</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Zgodność dokładna</td>
+                <td class="px-6 py-4">Encja 1001, kolor i rozmiar takie same w CSV i aplikacji.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800">zgodna</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B2</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Różnica wartości</td>
+                <td class="px-6 py-4">Encja 1002, rozmiar L w CSV i M w aplikacji.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">niezgodna — różnica</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B3</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Pusta wartość i brak atrybutu</td>
+                <td class="px-6 py-4">Encja 1003, kolor pusty w obu źródłach, rozmiar XL obecny.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800">zgodna</span> <span class="text-xs text-slate-500">pusta wartość ≠ brak</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B4</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Kolejność listy uporządkowanej</td>
+                <td class="px-6 py-4">Encja 1004, lista [M, L] w CSV i [L, M] w aplikacji.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">niezgodna — różnica</span> <span class="text-xs text-slate-500">lista uporządkowana</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B5</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Duplikat lub konflikt w CSV</td>
+                <td class="px-6 py-4">Encja 1005 ma dwa różne wiersze dla tego samego atrybutu.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-rose-100 px-2.5 py-1 text-xs font-bold text-rose-800">błąd danych wejściowych</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B6</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Encja z CSV nieobecna w aplikacji</td>
+                <td class="px-6 py-4">Encja 1006 występuje w CSV, ale aplikacja jej nie zwraca.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">niezgodna — brak encji</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B7</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Encja w aplikacji nieobecna w CSV</td>
+                <td class="px-6 py-4">Aplikacja zwraca encję 1007, której nie ma w pliku CSV.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-slate-200 px-2.5 py-1 text-xs font-bold text-slate-700">brak w CSV</span> <span class="text-xs text-slate-500">informacyjnie</span></td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-700">B8</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">Błąd ekstrakcji</td>
+                <td class="px-6 py-4">Wygasła sesja, przekierowanie na logowanie lub niepoprawny JSON dla encji 1008.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-rose-100 px-2.5 py-1 text-xs font-bold text-rose-800">błąd ekstrakcji</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="mt-4 text-xs leading-5 text-slate-500">Fixture B1–B8 jest minimalnym zestawem regresyjnym. Wszystkie przypadki muszą przejść przed bramką G2, a raport nie może pominąć żadnego z nich.</p>
     </section>
 
     <!-- 09. Pytania otwarte -->
     <section id="pytania" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">09</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">09</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Pytania otwarte</span>
       </div>
@@ -770,49 +963,49 @@
 
       <div class="mt-8 grid gap-4 md:grid-cols-2">
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P1</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P1</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Czy <code class="text-xs">encja_id</code> jest unikalny globalnie?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Jeśli identyfikatory powtarzają się między typami encji, bez <code class="text-xs">encja_typ</code> nie da się jednoznacznie wskazać obiektu.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P2</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P2</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Czy atrybuty mają stabilne klucze techniczne?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Jeśli istnieją tylko etykiety, trzeba zbudować słownik mapowania przed pierwszym przebiegiem.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P3</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P3</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Czy CSV jest źródłem prawdy?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Od tego zależy tryb ścisły: czy każdy nadmiarowy atrybut w aplikacji jest błędem, czy tylko informacją.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P4</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P4</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Co oznacza pusta komórka?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">„Wartość pusta” i „atrybut nie istnieje” to dwa różne stany. Kontrakt domyślnie je rozróżnia, ale wymaga potwierdzenia.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P5</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P5</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Czy kolejność listy ma znaczenie?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Dla list uporządkowanych porównanie musi uwzględniać kolejność; dla nieuporządkowanych — nie.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P6</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P6</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Czy dozwolone są atrybuty nadmiarowe?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Potrzebna jest jawna lista dozwolonych atrybutów albo decyzja, że każdy nadmiar jest niezgodnością.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P7</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P7</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Jaka jest tolerancja dla liczb?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Czy <code class="text-xs">1.0</code> i <code class="text-xs">1.00</code> to ta sama wartość, a może obowiązuje dopuszczalny zakres różnicy?</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">P8</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">P8</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Kto zatwierdza zmianę kontraktu?</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Bez wskazanej osoby zmiana schematu CSV może po cichu unieważnić wcześniejsze raporty.</p>
         </article>
@@ -820,7 +1013,7 @@
 
       <div class="mt-6 flex flex-col gap-4 rounded-3xl border border-indigo-200 bg-indigo-50/70 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
         <p class="max-w-3xl text-sm leading-6 text-indigo-900">
-          <span class="font-extrabold">Warunek zamknięcia kontraktu:</span> wszystkie osiem odpowiedzi są zapisane, a dokument otrzymuje wersję 1.0 i osobę zatwierdzającą.
+          <span class="font-extrabold">Warunek zamknięcia kontraktu:</span> wszystkie osiem odpowiedzi są zapisane, a dokument otrzymuje wersję 1.0 i osobę zatwierdzającą. To kryterium bramki G2 w <a href="./plan.html#bramki" class="font-bold underline decoration-indigo-300 underline-offset-4 hover:text-indigo-950">planie realizacji</a>.
         </p>
         <a href="./brief.html" class="inline-flex flex-none items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-slate-800">
           Wróć do dokumentu decyzyjnego
@@ -832,7 +1025,7 @@
     <!-- 10. Wersjonowanie -->
     <section id="wersje" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">10</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">10</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Wersjonowanie</span>
       </div>
@@ -842,20 +1035,26 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[760px] text-left">
+            <caption class="sr-only">Kiedy zmiana kontraktu unieważnia raport?</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Zmiana</th>
-                <th class="px-6 py-4">Wersja</th>
-                <th class="px-6 py-4">Wpływ na raport</th>
+                <th scope="col" class="px-6 py-4">Zmiana</th>
+                <th scope="col" class="px-6 py-4">Wersja</th>
+                <th scope="col" class="px-6 py-4">Wpływ na raport</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
               <tr class="transition hover:bg-slate-50/70">
-                <td class="px-6 py-4">Dodanie opcjonalnej kolumny lub nowego atrybutu.</td>
+                <td class="px-6 py-4">Dodanie ignorowanej kolumny opcjonalnej, która nie jest weryfikowana.</td>
                 <td class="px-6 py-4"><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">1.x</span></td>
                 <td class="px-6 py-4">Bez wpływu na wcześniejsze wyniki.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-4">Dodanie nowego atrybutu objętego weryfikacją.</td>
+                <td class="px-6 py-4"><span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">2.0</span></td>
+                <td class="px-6 py-4">Zmienia wyniki; wymaga ponownego przebiegu, raporty nieporównywalne.</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4">Zmiana reguły normalizacji lub znaczenia kolumny.</td>
@@ -879,15 +1078,15 @@
 
       <div class="mt-6 grid gap-4 sm:grid-cols-3">
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Nagłówek raportu</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">Nagłówek raportu</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Wersja kontraktu, data przebiegu, suma kontrolna CSV i identyfikator środowiska.</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Zasada zgodności</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">Zasada zgodności</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Dwa raporty można porównywać tylko przy tej samej wersji głównej kontraktu.</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Archiwum</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">Archiwum</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Poprzednie wersje kontraktu pozostają dostępne wraz z raportami, których dotyczą.</p>
         </div>
       </div>
@@ -896,7 +1095,7 @@
     <!-- 11. Rekomendacja -->
     <section id="rekomendacja" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">11</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">11</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rekomendacja</span>
       </div>
@@ -908,7 +1107,7 @@
       <div class="mt-8 overflow-hidden rounded-[2rem] bg-slate-950 p-7 shadow-xl shadow-slate-900/20 sm:p-9">
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
           <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
-            <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-indigo-400/15 text-2xl">📐</span>
+            <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-indigo-400/15 text-2xl" aria-hidden="true">📐</span>
             <div>
               <h3 class="text-xl font-extrabold text-white">Definicja gotowości kontraktu</h3>
               <p class="mt-2 max-w-2xl text-base leading-7 text-slate-300">
@@ -950,7 +1149,7 @@
     <!-- 12. Dokumenty powiązane -->
     <section id="dokumenty" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">12</span>
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-700">12</span>
         <span class="h-px w-10 bg-indigo-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Dokumenty powiązane</span>
       </div>
@@ -962,7 +1161,7 @@
       <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         <a href="./brief.html" class="group flex flex-col rounded-[2rem] border border-amber-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:shadow-soft">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-xl">🎯</span>
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-xl" aria-hidden="true">🎯</span>
             <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">Decyzja</span>
           </div>
           <h3 class="mt-5 text-lg font-extrabold tracking-tight text-slate-950 group-hover:text-amber-800">Dokument decyzyjny</h3>
@@ -972,7 +1171,7 @@
 
         <a href="./mvp.html" class="group flex flex-col rounded-[2rem] border border-emerald-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-soft">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-xl">🧩</span>
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-xl" aria-hidden="true">🧩</span>
             <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Zakres</span>
           </div>
           <h3 class="mt-5 text-lg font-extrabold tracking-tight text-slate-950 group-hover:text-emerald-800">Analiza MoSCoW</h3>
@@ -982,7 +1181,7 @@
 
         <a href="./approach.html" class="group flex flex-col rounded-[2rem] border border-sky-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-soft">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-xl">🧭</span>
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-xl" aria-hidden="true">🧭</span>
             <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">Technika</span>
           </div>
           <h3 class="mt-5 text-lg font-extrabold tracking-tight text-slate-950 group-hover:text-sky-800">Podejście techniczne</h3>
@@ -992,7 +1191,7 @@
 
         <a href="./plan.html" class="group flex flex-col rounded-[2rem] border border-cyan-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-cyan-300 hover:shadow-soft">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-xl">🗓️</span>
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-xl" aria-hidden="true">🗓️</span>
             <span class="rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">Plan</span>
           </div>
           <h3 class="mt-5 text-lg font-extrabold tracking-tight text-slate-950 group-hover:text-cyan-800">Plan realizacji</h3>
@@ -1002,7 +1201,7 @@
 
         <a href="./q-and-a.html" class="group flex flex-col rounded-[2rem] border border-violet-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-soft">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-xl">💬</span>
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-xl" aria-hidden="true">💬</span>
             <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">Rozmowa</span>
           </div>
           <h3 class="mt-5 text-lg font-extrabold tracking-tight text-slate-950 group-hover:text-violet-800">Pytania i odpowiedzi</h3>
@@ -1015,16 +1214,22 @@
 
   <footer class="border-t border-slate-200 bg-white/70">
     <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-      <p>Kontrakt danych w wersji roboczej 0.1. Wymaga zatwierdzenia przez właściciela danych.</p>
+      <p>Kontrakt danych w wersji roboczej 0.1. Wymaga zatwierdzenia przez właściciela danych. <span class="whitespace-nowrap">Wersja 1.0 · 5 listopada 2026</span></p>
       <div class="flex flex-wrap gap-4 font-semibold text-slate-700">
         <a href="./brief.html" class="transition hover:text-slate-950">Decyzja</a>
         <a href="./mvp.html" class="transition hover:text-slate-950">Zakres MVP</a>
         <a href="./approach.html" class="transition hover:text-slate-950">Podejście</a>
         <a href="./plan.html" class="transition hover:text-slate-950">Plan</a>
         <a href="./q-and-a.html" class="transition hover:text-slate-950">Pytania</a>
+        <a href="./docs.html" class="transition hover:text-slate-950">Wszystkie dokumenty</a>
       </div>
     </div>
   </footer>
 
+  <script>
+    document.querySelectorAll('details.mobile-menu a').forEach((link) => {
+      link.addEventListener('click', () => link.closest('details').removeAttribute('open'));
+    });
+  </script>
 </body>
 </html>

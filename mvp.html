@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MVP weryfikacji atrybutów encji — analiza MoSCoW</title>
   <meta name="description" content="Analiza MoSCoW zakresu pierwszej wersji narzędzia do weryfikacji atrybutów encji względem pliku CSV w starszej aplikacji opartej na jQuery.">
+  <meta property="og:title" content="MVP weryfikacji atrybutów encji — analiza MoSCoW">
+  <meta property="og:description" content="Analiza MoSCoW zakresu pierwszej wersji narzędzia do weryfikacji atrybutów encji względem pliku CSV w starszej aplikacji opartej na jQuery.">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pl_PL">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="document-version" content="1.0">
+  <meta name="document-date" content="2026-11-05">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='68' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3ED%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -49,9 +57,92 @@
     .section-anchor {
       scroll-margin-top: 6rem;
     }
+
+    summary {
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid #1d4ed8;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 5px #ffffff;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media print {
+      header,
+      footer,
+      .mobile-menu,
+      .pointer-events-none {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      main {
+        max-width: none !important;
+        padding: 0 !important;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+
+      .bg-slate-950,
+      .bg-slate-900 {
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      .bg-slate-950 *,
+      .bg-slate-900 * {
+        color: #0f172a !important;
+      }
+
+      main .text-transparent {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+      }
+
+      main .bg-clip-text {
+        background: none !important;
+      }
+
+      a {
+        color: #0f172a !important;
+        text-decoration: underline;
+      }
+
+      table {
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <a href="#gora" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-slate-950 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white">Przejdź do treści</a>
 
   <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
     <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-emerald-200/40 blur-3xl"></div>
@@ -78,9 +169,33 @@
         <a href="#rekomendacja" class="rounded-full bg-slate-950 px-3 py-2 text-white transition hover:bg-slate-800">Rekomendacja</a>
       </nav>
 
-      <a href="#rekomendacja" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
-        Rekomendacja
-      </a>
+      <details class="mobile-menu relative lg:hidden">
+        <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800">
+          Menu
+          <span aria-hidden="true">▾</span>
+        </summary>
+        <div class="absolute right-0 z-50 mt-3 max-h-[calc(100vh-6rem)] w-72 overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
+          <p class="px-2 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Sekcje</p>
+          <div class="mt-2 grid grid-cols-2 gap-1">
+            <a href="#kontekst" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Kontekst</a>
+            <a href="#moscow" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">MoSCoW</a>
+            <a href="#ukonczenie" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Ukończenie</a>
+            <a href="#zalozenia" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Założenia</a>
+            <a href="#kolejnosc" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Kolejność</a>
+            <a href="#rekomendacja" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Rekomendacja</a>
+          </div>
+          <p class="mt-4 border-t border-slate-100 px-2 pt-4 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Dokumenty</p>
+          <div class="mt-2 grid gap-1">
+            <a href="./brief.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Dokument decyzyjny</a>
+            <a href="./mvp.html" class="rounded-xl bg-slate-100 px-2 py-2 text-sm font-semibold text-slate-950">Zakres MVP</a>
+            <a href="./approach.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Podejście</a>
+            <a href="./data-contract.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Kontrakt danych</a>
+            <a href="./plan.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Plan realizacji</a>
+            <a href="./q-and-a.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Pytania i odpowiedzi</a>
+            <a href="./docs.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Wszystkie dokumenty</a>
+          </div>
+        </div>
+      </details>
     </div>
   </header>
 
@@ -113,16 +228,16 @@
 
             <div class="mt-8 flex flex-wrap gap-3">
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🧩</span> 28 elementów zakresu
+                <span class="text-base" aria-hidden="true">🧩</span> 28 elementów zakresu
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🟢</span> 8 pozycji krytycznych
+                <span class="text-base" aria-hidden="true">🟢</span> 8 pozycji krytycznych
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🛡️</span> Tryb tylko do odczytu
+                <span class="text-base" aria-hidden="true">🛡️</span> Tryb tylko do odczytu
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🗂️</span> Kilkaset encji
+                <span class="text-base" aria-hidden="true">🗂️</span> Kilkaset encji
               </span>
             </div>
           </div>
@@ -159,7 +274,7 @@
     <!-- 01. Kontekst -->
     <section id="kontekst" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">01</span>
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-700">01</span>
         <span class="h-px w-10 bg-emerald-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Kontekst</span>
       </div>
@@ -170,25 +285,25 @@
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🎯</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl" aria-hidden="true">🎯</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Cel</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Powtarzalna weryfikacja atrybutów wszystkich encji z pliku CSV względem stanu w aplikacji.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">👥</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl" aria-hidden="true">👥</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Odbiorca</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Zespół danych, testów i opiekun starszej aplikacji, który potrzebuje wiarygodnego raportu rozbieżności.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">📐</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl" aria-hidden="true">📐</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Granica</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Odczyt przez istniejące punkty końcowe i sesję użytkownika. Bez zapisu i bez modyfikacji aplikacji.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">✅</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl" aria-hidden="true">✅</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Sukces</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Każda encja ma jednoznaczny wynik i dowód, a cały przebieg można odtworzyć z konfiguracji.</p>
         </article>
@@ -202,7 +317,7 @@
     <!-- 02. MoSCoW -->
     <section id="moscow" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">02</span>
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-700">02</span>
         <span class="h-px w-10 bg-emerald-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Analiza MoSCoW</span>
       </div>
@@ -214,7 +329,7 @@
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <a href="#musi" class="group rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
           <div class="flex items-center justify-between">
-            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-600 text-sm font-black text-white">M</span>
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-700 text-sm font-black text-white">M</span>
             <span class="text-2xl font-black text-emerald-700">8</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-emerald-800">Musi mieć</h3>
@@ -223,7 +338,7 @@
 
         <a href="#powinno" class="group rounded-3xl border border-sky-200 bg-sky-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
           <div class="flex items-center justify-between">
-            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-600 text-sm font-black text-white">S</span>
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-700 text-sm font-black text-white">S</span>
             <span class="text-2xl font-black text-sky-700">7</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-sky-800">Powinno mieć</h3>
@@ -232,7 +347,7 @@
 
         <a href="#moze" class="group rounded-3xl border border-amber-200 bg-amber-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
           <div class="flex items-center justify-between">
-            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 text-sm font-black text-white">C</span>
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 text-sm font-black text-slate-950">C</span>
             <span class="text-2xl font-black text-amber-700">6</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-amber-800">Może mieć</h3>
@@ -241,7 +356,7 @@
 
         <a href="#nie" class="group rounded-3xl border border-rose-200 bg-rose-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
           <div class="flex items-center justify-between">
-            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-600 text-sm font-black text-white">W</span>
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-700 text-sm font-black text-white">W</span>
             <span class="text-2xl font-black text-rose-700">7</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-rose-800">Nie teraz</h3>
@@ -263,7 +378,7 @@
         <div class="mt-6 grid gap-4 md:grid-cols-2">
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M1</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M1</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Słownik i mapowanie identyfikatorów</h4>
@@ -273,7 +388,7 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M2</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M2</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Parser i audyt pliku CSV</h4>
@@ -283,7 +398,7 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M3</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M3</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Odczyt przez $.post w kontekście strony</h4>
@@ -293,7 +408,7 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M4</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M4</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Normalizacja i zapis dowodów</h4>
@@ -303,7 +418,7 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M5</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M5</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Silnik porównania</h4>
@@ -313,7 +428,7 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M6</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M6</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Raport wyników</h4>
@@ -323,7 +438,7 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M7</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M7</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Kontrola krzyżowa z widokiem DOM</h4>
@@ -333,11 +448,11 @@
 
           <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M8</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">M8</span>
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Zabezpieczenia trybu tylko do odczytu</h4>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Konto o minimalnych uprawnieniach, blokada zapisów, ograniczenie tempa i redakcja danych uwierzytelniających.</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Konto o minimalnych uprawnieniach, wykrywanie i przerwanie prób zapisu, ograniczenie tempa i redakcja danych uwierzytelniających.</p>
             <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> przebieg nie wykonuje żadnej operacji modyfikującej dane.</p>
           </article>
         </div>
@@ -349,7 +464,7 @@
           <div>
             <span class="inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-800">S · Powinno mieć</span>
             <h3 class="mt-3 text-2xl font-black tracking-tight text-slate-950">Stabilność i wygoda użytkowania</h3>
-            <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">Te elementy znacząco poprawiają jakość, ale można dostarczyć MVP bez nich, jeśli ograniczy to ryzyko lub czas startu.</p>
+            <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">Te elementy znacząco poprawiają jakość i większość z nich można odłożyć, jeśli ograniczy to ryzyko lub czas startu. Wyjątkiem są S5 i S7 — metadane oraz klasyfikacja różnic są warunkiem odbioru końcowego.</p>
           </div>
           <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">7 elementów</span>
         </div>
@@ -357,7 +472,7 @@
         <div class="mt-6 grid gap-4 md:grid-cols-2">
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S1</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S1</span>
               <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Konfiguracja i uruchamianie z wiersza poleceń</h4>
@@ -367,7 +482,7 @@
 
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S2</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S2</span>
               <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Pamięć podręczna surowych odpowiedzi</h4>
@@ -377,7 +492,7 @@
 
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S3</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S3</span>
               <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Walidacja schematu i wykrywanie zmian</h4>
@@ -387,7 +502,7 @@
 
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S4</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S4</span>
               <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Obsługa wygaśnięcia sesji</h4>
@@ -397,17 +512,17 @@
 
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S5</span>
-              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S5</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne · warunek odbioru</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Metadane i logi przebiegu</h4>
             <p class="mt-2 text-sm leading-6 text-slate-600">Zapis daty, sumy kontrolnej pliku CSV, wersji narzędzia i identyfikatora środowiska.</p>
-            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> każdy raport można jednoznacznie przypisać do danych wejściowych.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> każdy raport można jednoznacznie przypisać do danych wejściowych. S5 nie podlega cięciu z zakresu odbioru.</p>
           </article>
 
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S6</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S6</span>
               <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Wariant awaryjny oparty na DOM</h4>
@@ -417,12 +532,12 @@
 
           <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm md:col-span-2">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S7</span>
-              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">S7</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne · warunek odbioru</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Klasyfikacja rozbieżności</h4>
             <p class="mt-2 max-w-4xl text-sm leading-6 text-slate-600">Przypisanie różnic do kategorii: dane CSV, mapowanie identyfikatorów, błąd aplikacji lub problem techniczny, wraz ze wskazaniem właściciela do dalszej analizy.</p>
-            <p class="mt-4 max-w-4xl rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> każda niezgodność ma kategorię i nie wymaga ręcznego sortowania od zera.</p>
+            <p class="mt-4 max-w-4xl rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> każda niezgodność ma kategorię i nie wymaga ręcznego sortowania od zera. S7 nie podlega cięciu z zakresu odbioru.</p>
           </article>
         </div>
       </div>
@@ -441,7 +556,7 @@
         <div class="mt-6 grid gap-4 md:grid-cols-2">
           <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C1</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">C1</span>
               <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Raport HTML z filtrami</h4>
@@ -451,7 +566,7 @@
 
           <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C2</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">C2</span>
               <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Równoległość z limitem</h4>
@@ -461,7 +576,7 @@
 
           <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C3</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">C3</span>
               <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Przebiegi przyrostowe</h4>
@@ -471,7 +586,7 @@
 
           <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C4</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">C4</span>
               <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Historia i trendy</h4>
@@ -481,7 +596,7 @@
 
           <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C5</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">C5</span>
               <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Powiadomienia o rozbieżnościach</h4>
@@ -491,7 +606,7 @@
 
           <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C6</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">C6</span>
               <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Zrzuty ekranu i DOM dla błędów</h4>
@@ -515,7 +630,7 @@
         <div class="mt-6 grid gap-4 md:grid-cols-2">
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W1</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W1</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Oficjalne API w starszej aplikacji</h4>
@@ -525,7 +640,7 @@
 
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W2</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W2</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Automatyczne poprawianie danych</h4>
@@ -535,7 +650,7 @@
 
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W3</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W3</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Monitorowanie w czasie rzeczywistym</h4>
@@ -545,7 +660,7 @@
 
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W4</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W4</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Zastąpienie panelu administracyjnego</h4>
@@ -555,7 +670,7 @@
 
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W5</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W5</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Wsparcie wielu środowisk i dzierżawców</h4>
@@ -565,7 +680,7 @@
 
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W6</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W6</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Pełna macierz uprawnień</h4>
@@ -575,7 +690,7 @@
 
           <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm md:col-span-2">
             <div class="flex items-center justify-between gap-4">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W7</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-700 text-xs font-black text-white">W7</span>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
             </div>
             <h4 class="mt-4 text-lg font-extrabold text-slate-950">Testy wydajnościowe i obciążeniowe</h4>
@@ -589,7 +704,7 @@
     <!-- 03. Definicja ukończenia -->
     <section id="ukonczenie" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">03</span>
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-700">03</span>
         <span class="h-px w-10 bg-emerald-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Definicja ukończenia</span>
       </div>
@@ -601,27 +716,27 @@
       <div class="mt-8 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <ul class="grid gap-4 sm:grid-cols-2">
           <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700" aria-hidden="true">✓</span>
             Wszystkie encje z pliku CSV mają wynik: zgodna, niezgodna, brak w CSV lub błąd ekstrakcji.
           </li>
           <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700" aria-hidden="true">✓</span>
             Pilot 5–10 encji potwierdza zgodność danych z punktu końcowego z widokiem DOM.
           </li>
           <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700" aria-hidden="true">✓</span>
             Raport zawiera oczekiwane i rzeczywiste zbiory oraz konkretne różnice dla każdej encji.
           </li>
           <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700" aria-hidden="true">✓</span>
             Przebieg jest powtarzalny z konfiguracji i nie wymaga edycji kodu.
           </li>
           <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700" aria-hidden="true">✓</span>
             W całym przebiegu nie wykonano żadnej operacji zapisu do aplikacji.
           </li>
           <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700" aria-hidden="true">✓</span>
             Znane ograniczenia, założenia i wariant awaryjny są opisane w dokumentacji.
           </li>
         </ul>
@@ -635,7 +750,7 @@
     <!-- 04. Założenia -->
     <section id="zalozenia" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">04</span>
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-700">04</span>
         <span class="h-px w-10 bg-emerald-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Założenia i zależności</span>
       </div>
@@ -646,37 +761,37 @@
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🆔</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl" aria-hidden="true">🆔</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Stabilne identyfikatory</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">CSV i aplikacja pozwalają jednoznacznie wskazać encję oraz atrybut bez opierania się na nazwach wyświetlanych.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">🔑</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl" aria-hidden="true">🔑</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Dostęp do odczytu</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Istnieje konto lub sesja o uprawnieniach wystarczających do odczytu wszystkich wymaganych encji.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">🔌</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl" aria-hidden="true">🔌</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Dostępność punktów końcowych</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Wewnętrzne punkty końcowe działają w środowisku weryfikacyjnym i zwracają dane potrzebne do porównania.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">🧱</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl" aria-hidden="true">🧱</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Brak zmian w starszej aplikacji</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">MVP nie wymaga nowego API, migracji ani modyfikacji kodu po stronie systemu.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-50 text-xl">👤</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-50 text-xl" aria-hidden="true">👤</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Właściciel danych</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Jest osoba odpowiedzialna za aktualność pliku CSV i klasyfikację zgłoszonych rozbieżności.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-50 text-xl">🎛️</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-50 text-xl" aria-hidden="true">🎛️</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Jedna instancja</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Zakres obejmuje jedno środowisko, jeden zestaw CSV i jeden profil uprawnień.</p>
         </article>
@@ -686,7 +801,7 @@
     <!-- 05. Kolejność -->
     <section id="kolejnosc" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">05</span>
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-700">05</span>
         <span class="h-px w-10 bg-emerald-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Kolejność realizacji</span>
       </div>
@@ -697,31 +812,31 @@
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 1</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Etap 1</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Odkrycie</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Przechwycenie żądania, dokumentacja kontraktu i próbka 2–3 encji.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 2</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Etap 2</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Rdzeń</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Parser CSV, ekstrakcja, normalizacja i silnik porównania.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 3</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Etap 3</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Raport</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Wyniki, dowody, podsumowanie i klasyfikacja rozbieżności.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 4</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Etap 4</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Pilot</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">5–10 encji, kontrola DOM, poprawki i potwierdzenie wiarygodności.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 5</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Etap 5</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Odbiór</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Spełnienie definicji ukończenia, dokumentacja i przekazanie.</p>
         </article>
@@ -731,7 +846,7 @@
     <!-- 06. Rekomendacja -->
     <section id="rekomendacja" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">06</span>
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-700">06</span>
         <span class="h-px w-10 bg-emerald-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rekomendacja</span>
       </div>
@@ -742,7 +857,7 @@
 
       <div class="mt-8 overflow-hidden rounded-[2rem] bg-slate-950 p-7 shadow-xl shadow-slate-900/20 sm:p-9">
         <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
-          <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-emerald-400/15 text-2xl">🚀</span>
+          <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-emerald-400/15 text-2xl" aria-hidden="true">🚀</span>
           <div>
             <h3 class="text-xl font-extrabold text-white">Pierwszy kamień milowy</h3>
             <p class="mt-2 max-w-4xl text-base leading-7 text-slate-300">
@@ -773,10 +888,22 @@
 
   <footer class="border-t border-slate-200 bg-white/70">
     <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-      <p>Dokument opisuje zakres MVP i analizę MoSCoW. Nie zawiera zmian w aplikacji.</p>
-      <p class="font-semibold text-slate-700">Weryfikacja atrybutów encji · zakres pierwszej wersji</p>
+      <p>Dokument opisuje zakres MVP i analizę MoSCoW. Nie zawiera zmian w aplikacji. <span class="whitespace-nowrap">Wersja 1.0 · 5 listopada 2026</span></p>
+      <div class="flex flex-wrap gap-4 font-semibold text-slate-700">
+        <a href="./brief.html" class="transition hover:text-slate-950">Decyzja</a>
+        <a href="./approach.html" class="transition hover:text-slate-950">Podejście</a>
+        <a href="./data-contract.html" class="transition hover:text-slate-950">Kontrakt</a>
+        <a href="./plan.html" class="transition hover:text-slate-950">Plan</a>
+        <a href="./q-and-a.html" class="transition hover:text-slate-950">Pytania</a>
+        <a href="./docs.html" class="transition hover:text-slate-950">Wszystkie dokumenty</a>
+      </div>
     </div>
   </footer>
 
+  <script>
+    document.querySelectorAll('details.mobile-menu a').forEach((link) => {
+      link.addEventListener('click', () => link.closest('details').removeAttribute('open'));
+    });
+  </script>
 </body>
 </html>

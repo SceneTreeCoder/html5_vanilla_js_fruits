@@ -564,6 +564,7 @@ function renderActions(list, label, adjectives, animals) {
 }
 
 function render(adjectives, animals, fruits) {
+  const docsLink = document.querySelector('a[href="./docs.html"]');
   document.body.replaceChildren();
   ensureStyles();
 
@@ -638,6 +639,10 @@ function render(adjectives, animals, fruits) {
   card.append(label, list, renderActions(list, label, adjectives, animals));
   page.appendChild(card);
   document.body.appendChild(page);
+
+  if (docsLink) {
+    document.body.appendChild(docsLink);
+  }
 }
 
 async function main() {

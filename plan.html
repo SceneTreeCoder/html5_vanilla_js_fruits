@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plan realizacji MVP — jeden deweloper</title>
   <meta name="description" content="Plan realizacji MVP weryfikacji atrybutów encji dla jednego dewelopera: etapy, dni robocze, bramki, odpowiedzialności, ryzyka i zasady reakcji na poślizg.">
+  <meta property="og:title" content="Plan realizacji MVP — jeden deweloper">
+  <meta property="og:description" content="Plan realizacji MVP weryfikacji atrybutów encji dla jednego dewelopera: etapy, dni robocze, bramki, odpowiedzialności, ryzyka i zasady reakcji na poślizg.">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pl_PL">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="document-version" content="1.0">
+  <meta name="document-date" content="2026-11-05">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='68' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3ED%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -49,9 +57,92 @@
     .section-anchor {
       scroll-margin-top: 6rem;
     }
+
+    summary {
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid #1d4ed8;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 5px #ffffff;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media print {
+      header,
+      footer,
+      .mobile-menu,
+      .pointer-events-none {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      main {
+        max-width: none !important;
+        padding: 0 !important;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+
+      .bg-slate-950,
+      .bg-slate-900 {
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      .bg-slate-950 *,
+      .bg-slate-900 * {
+        color: #0f172a !important;
+      }
+
+      main .text-transparent {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+      }
+
+      main .bg-clip-text {
+        background: none !important;
+      }
+
+      a {
+        color: #0f172a !important;
+        text-decoration: underline;
+      }
+
+      table {
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <a href="#gora" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-slate-950 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white">Przejdź do treści</a>
 
   <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
     <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-sky-200/50 blur-3xl"></div>
@@ -79,9 +170,35 @@
         <a href="#rekomendacja" class="rounded-full bg-slate-950 px-3 py-2 text-white transition hover:bg-slate-800">Rekomendacja</a>
       </nav>
 
-      <a href="#rekomendacja" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
-        Rekomendacja
-      </a>
+      <details class="mobile-menu relative lg:hidden">
+        <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800">
+          Menu
+          <span aria-hidden="true">▾</span>
+        </summary>
+        <div class="absolute right-0 z-50 mt-3 max-h-[calc(100vh-6rem)] w-72 overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
+          <p class="px-2 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Sekcje</p>
+          <div class="mt-2 grid grid-cols-2 gap-1">
+            <a href="#zalozenia" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Założenia</a>
+            <a href="#plan" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Dni</a>
+            <a href="#bramki" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Bramki</a>
+            <a href="#role" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Role</a>
+            <a href="#ryzyka" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Ryzyka</a>
+            <a href="#poslizg" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Poślizg</a>
+            <a href="#status" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Rytm pracy</a>
+            <a href="#rekomendacja" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Rekomendacja</a>
+          </div>
+          <p class="mt-4 border-t border-slate-100 px-2 pt-4 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Dokumenty</p>
+          <div class="mt-2 grid gap-1">
+            <a href="./brief.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Dokument decyzyjny</a>
+            <a href="./mvp.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Zakres MVP</a>
+            <a href="./approach.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Podejście</a>
+            <a href="./data-contract.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Kontrakt danych</a>
+            <a href="./plan.html" class="rounded-xl bg-slate-100 px-2 py-2 text-sm font-semibold text-slate-950">Plan realizacji</a>
+            <a href="./q-and-a.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Pytania i odpowiedzi</a>
+            <a href="./docs.html" class="rounded-xl px-2 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Wszystkie dokumenty</a>
+          </div>
+        </div>
+      </details>
     </div>
   </header>
 
@@ -114,16 +231,16 @@
 
             <div class="mt-8 flex flex-wrap gap-3">
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">👤</span> 1 deweloper
+                <span class="text-base" aria-hidden="true">👤</span> 1 deweloper
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">📅</span> 13 dni bazowo
+                <span class="text-base" aria-hidden="true">📅</span> 13 dni bazowo
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🛟</span> 2 dni bufora
+                <span class="text-base" aria-hidden="true">🛟</span> 2 dni bufora
               </span>
               <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
-                <span class="text-base">🚧</span> 5 bramek
+                <span class="text-base" aria-hidden="true">🚧</span> 5 bramek
               </span>
             </div>
           </div>
@@ -141,7 +258,7 @@
             <div class="mt-6 space-y-4 border-t border-white/10 pt-5">
               <div class="flex items-start gap-3">
                 <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-sky-400/15 text-xs font-black text-sky-300">1</span>
-                <p class="text-sm leading-6 text-slate-300">100% alokacji dewelopera. Przy 50% czas kalendarzowy rośnie do 26–30 dni.</p>
+                <p class="text-sm leading-6 text-slate-300">100% alokacji dewelopera. Przy 50% ten sam zakres zajmuje 26–30 dni roboczych, czyli około 5–6 tygodni kalendarzowych.</p>
               </div>
               <div class="flex items-start gap-3">
                 <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-sky-400/15 text-xs font-black text-sky-300">2</span>
@@ -160,7 +277,7 @@
     <!-- 01. Założenia -->
     <section id="zalozenia" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">01</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">01</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Założenia</span>
       </div>
@@ -171,25 +288,25 @@
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">👤</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl" aria-hidden="true">👤</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Jedna osoba</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Całą implementację, testy i dokumentację wykonuje jeden deweloper. Nie ma drugiej osoby do równoległej pracy.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🕒</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl" aria-hidden="true">🕒</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Pełny etat</h3>
-          <p class="mt-2 text-sm leading-6 text-slate-600">13 dni roboczych przy 100% alokacji. Przy 50% ten sam zakres zajmuje 26–30 dni kalendarzowych.</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">13 dni roboczych przy 100% alokacji. Przy 50% ten sam zakres zajmuje 26–30 dni roboczych, czyli około 5–6 tygodni kalendarzowych.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-xl">🔑</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-xl" aria-hidden="true">🔑</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">Dostęp od D1</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Środowisko, konto tylko do odczytu i zgoda na korzystanie z wewnętrznych punktów końcowych są gotowe przed startem.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">📄</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl" aria-hidden="true">📄</span>
           <h3 class="mt-5 text-base font-extrabold text-slate-950">CSV i właściciel</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Plik CSV jest aktualny, a właściciel danych odpowiada na pytania w ciągu jednego dnia roboczego.</p>
         </article>
@@ -221,7 +338,7 @@
     <!-- 02. Plan dni -->
     <section id="plan" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">02</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">02</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Plan dni</span>
       </div>
@@ -231,14 +348,15 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[820px] text-left">
+            <caption class="sr-only">Trzynaście dni, jedna ścieżka</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Dzień</th>
-                <th class="px-6 py-4">Zadanie</th>
-                <th class="px-6 py-4">Wynik dnia</th>
-                <th class="px-6 py-4">Bramka</th>
+                <th scope="col" class="px-6 py-4">Dzień</th>
+                <th scope="col" class="px-6 py-4">Zadanie</th>
+                <th scope="col" class="px-6 py-4">Wynik dnia</th>
+                <th scope="col" class="px-6 py-4">Bramka</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -249,7 +367,7 @@
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D1</td>
                 <td class="px-6 py-4">Przechwycenie żądania <code class="text-xs">$.post</code>, opis nagłówków, sesji i formatu odpowiedzi.</td>
                 <td class="px-6 py-4">Notatka techniczna i szkic kontraktu danych.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D2</td>
@@ -265,25 +383,25 @@
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D3</td>
                 <td class="px-6 py-4">Parser CSV i audyt wejścia: duplikaty, konflikty, nieznane identyfikatory, puste wartości.</td>
                 <td class="px-6 py-4">Raport wejściowy i testy parsera.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D4</td>
                 <td class="px-6 py-4">Odczyt pojedynczej encji przez <code class="text-xs">$.post</code> w kontekście strony.</td>
                 <td class="px-6 py-4">Działający odczyt jednej encji z dowodem.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D5</td>
-                <td class="px-6 py-4">Ekstrakcja wsadowa, pamięć podręczna surowych odpowiedzi, obsługa błędów transportu.</td>
+                <td class="px-6 py-4">Ekstrakcja wsadowa i obsługa błędów transportu; pamięć podręczna surowych odpowiedzi jako opcja.</td>
                 <td class="px-6 py-4">Powtarzalny przebieg na próbce bez ręcznego klikania.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D6</td>
                 <td class="px-6 py-4">Normalizacja wartości i silnik porównania według tabeli decyzyjnej.</td>
                 <td class="px-6 py-4">Wynik zgodna / niezgodna / błąd dla każdej encji.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D7</td>
@@ -299,7 +417,7 @@
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D8</td>
                 <td class="px-6 py-4">Raport maszynowy JSON/CSV oraz czytelne podsumowanie dla człowieka.</td>
                 <td class="px-6 py-4">Raport z liczbami, wynikami i listą różnic.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D9</td>
@@ -315,7 +433,7 @@
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D10</td>
                 <td class="px-6 py-4">Pilotaż 5 encji i kontrola krzyżowa danych z widokiem DOM.</td>
                 <td class="px-6 py-4">Lista rozbieżności JSON vs DOM lub potwierdzenie zgodności.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D11</td>
@@ -331,7 +449,7 @@
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D12</td>
                 <td class="px-6 py-4">Dokumentacja, runbook uruchomienia i opis ograniczeń.</td>
                 <td class="px-6 py-4">Instrukcja pozwalająca powtórzyć przebieg bez autora.</td>
-                <td class="px-6 py-4 text-slate-400">—</td>
+                <td class="px-6 py-4 text-slate-500">—</td>
               </tr>
               <tr class="transition hover:bg-slate-50/70">
                 <td class="px-6 py-4 font-mono text-xs font-bold text-slate-900">D13</td>
@@ -353,41 +471,41 @@
 
       <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Odkrycie</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-700">Odkrycie</p>
           <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
           <p class="mt-1 text-xs leading-5 text-slate-500">Kontrakt, próbka, ryzyka</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Rdzeń</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Rdzeń</p>
           <p class="mt-2 text-2xl font-black text-slate-950">5 dni</p>
           <p class="mt-1 text-xs leading-5 text-slate-500">Parser, odczyt, porównanie</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-cyan-600">Raport</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-cyan-700">Raport</p>
           <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
           <p class="mt-1 text-xs leading-5 text-slate-500">Wyniki, dowody, metadane</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-amber-600">Pilot</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Pilot</p>
           <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
           <p class="mt-1 text-xs leading-5 text-slate-500">DOM, poprawki, powtórka</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Odbiór</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">Odbiór</p>
           <p class="mt-2 text-2xl font-black text-slate-950">2 dni</p>
           <p class="mt-1 text-xs leading-5 text-slate-500">Dokumentacja, finalny przebieg</p>
         </div>
       </div>
 
       <p class="mt-4 text-xs leading-5 text-slate-500">
-        Suma bazowa: 13 dni. Bufor: 2 dni. Widełki: 13–15 dni roboczych. Wariant 10-dniowy jest możliwy tylko wtedy, gdy parser CSV i raport tekstowy są już dostępne — w przeciwnym razie grozi to skróceniem testów, a nie realnym przyspieszeniem.
+        Suma bazowa: 13 dni. Bufor: 2 dni. Widełki: 13–15 dni roboczych. Skrócenie poniżej 13 dni wymagałoby usunięcia elementu krytycznego z zakresu, więc zamiast tego świadomie przesuwamy datę albo zmniejszamy zakres.
       </p>
     </section>
 
     <!-- 03. Bramki -->
     <section id="bramki" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">03</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">03</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Bramki</span>
       </div>
@@ -399,7 +517,7 @@
       <div class="mt-8 grid gap-4 md:grid-cols-2">
         <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">G1</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-xs font-black text-white">G1</span>
             <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">po D2</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Kontrakt i próbka</h3>
@@ -408,16 +526,16 @@
 
         <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">G2</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xs font-black text-white">G2</span>
             <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">po D7</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Rdzeń działa na fixture</h3>
-          <p class="mt-2 text-sm leading-6 text-slate-600">Przykład referencyjny z kontraktu przechodzi bez różnic, a przebieg nie wykonuje żadnej operacji zapisu.</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Kontrakt 1.0 jest zatwierdzony przez właściciela danych, przykład referencyjny z kontraktu przechodzi bez różnic, a przebieg nie wykonuje żadnej operacji zapisu.</p>
         </article>
 
         <article class="rounded-3xl border border-cyan-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-600 text-xs font-black text-white">G3</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-700 text-xs font-black text-white">G3</span>
             <span class="rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-800">po D9</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Raport jest audytowalny</h3>
@@ -426,7 +544,7 @@
 
         <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">G4</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-slate-950">G4</span>
             <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">po D11</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Pilot potwierdza DOM</h3>
@@ -435,7 +553,7 @@
 
         <article class="rounded-3xl border border-indigo-200 bg-white p-6 shadow-sm md:col-span-2">
           <div class="flex items-center justify-between gap-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white">G5</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-700 text-xs font-black text-white">G5</span>
             <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-800">po D13</span>
           </div>
           <h3 class="mt-4 text-lg font-extrabold text-slate-950">Odbiór i przekazanie</h3>
@@ -447,7 +565,7 @@
     <!-- 04. Role -->
     <section id="role" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">04</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">04</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Role</span>
       </div>
@@ -457,15 +575,16 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[860px] text-left">
+            <caption class="sr-only">Jedna osoba implementuje, kilka osób odblokowuje</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Aktywność</th>
-                <th class="px-6 py-4">Deweloper</th>
-                <th class="px-6 py-4">Lider</th>
-                <th class="px-6 py-4">Właściciel danych</th>
-                <th class="px-6 py-4">Bezpieczeństwo / ops</th>
+                <th scope="col" class="px-6 py-4">Aktywność</th>
+                <th scope="col" class="px-6 py-4">Deweloper</th>
+                <th scope="col" class="px-6 py-4">Lider</th>
+                <th scope="col" class="px-6 py-4">Właściciel danych</th>
+                <th scope="col" class="px-6 py-4">Bezpieczeństwo / ops</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -525,15 +644,15 @@
 
       <div class="mt-6 grid gap-4 sm:grid-cols-3">
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Deweloper</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-700">Deweloper</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Implementacja, testy, dokumentacja, kontakt techniczny. Jedna osoba, pełna odpowiedzialność za wykonanie.</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Lider</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-700">Lider</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Zakres, priorytety, decyzje, odbiór. Jeden punkt eskalacji, nie codzienny nadzór.</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-600">Właściciel danych</p>
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-sky-700">Właściciel danych</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Aktualność CSV, odpowiedzi na pytania kontraktowe, klasyfikacja różnic biznesowych.</p>
         </div>
       </div>
@@ -542,7 +661,7 @@
     <!-- 05. Ryzyka -->
     <section id="ryzyka" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">05</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">05</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Ryzyka</span>
       </div>
@@ -552,14 +671,15 @@
       </p>
 
       <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabela z możliwością przewijania">
           <table class="w-full min-w-[900px] text-left">
+            <caption class="sr-only">Ryzyka specyficzne dla jednej osoby</caption>
             <thead class="border-b border-slate-200 bg-slate-50">
               <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                <th class="px-6 py-4">Ryzyko</th>
-                <th class="px-6 py-4">Wpływ na plan</th>
-                <th class="px-6 py-4">Ograniczenie</th>
-                <th class="px-6 py-4">Reakcja</th>
+                <th scope="col" class="px-6 py-4">Ryzyko</th>
+                <th scope="col" class="px-6 py-4">Wpływ na plan</th>
+                <th scope="col" class="px-6 py-4">Ograniczenie</th>
+                <th scope="col" class="px-6 py-4">Reakcja</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
@@ -608,7 +728,7 @@
     <!-- 06. Poślizg -->
     <section id="poslizg" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">06</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">06</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Poślizg</span>
       </div>
@@ -619,22 +739,22 @@
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article class="rounded-3xl border border-emerald-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Krok 1</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Krok 1</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Włącz bufor</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Dni 14–15 są na to przeznaczone. Nie przenosimy ich na nowe funkcje.</p>
         </article>
         <article class="rounded-3xl border border-amber-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-amber-600">Krok 2</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-amber-700">Krok 2</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Odetnij „może mieć”</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Raport HTML, równoległość, historia i powiadomienia wypadają pierwsze.</p>
         </article>
         <article class="rounded-3xl border border-orange-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-orange-600">Krok 3</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-orange-700">Krok 3</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Uprość „powinno mieć”</h3>
-          <p class="mt-2 text-sm leading-6 text-slate-600">Pamięć podręczna, metadane i klasyfikacja mogą poczekać, jeśli blokują odbiór.</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Pamięć podręczna i walidacja schematu mogą poczekać. Metadane, dowody i klasyfikacja różnic zostają — są warunkiem odbioru.</p>
         </article>
         <article class="rounded-3xl border border-rose-200 bg-white p-5 shadow-sm">
-          <span class="text-xs font-black uppercase tracking-[0.16em] text-rose-600">Krok 4</span>
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-rose-700">Krok 4</span>
           <h3 class="mt-3 text-base font-extrabold text-slate-950">Eskaluj, nie improwizuj</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Po dwóch dniach poślizgu lider decyduje: nowa data, mniejszy zakres lub większa alokacja.</p>
         </article>
@@ -643,10 +763,10 @@
       <div class="mt-6 rounded-3xl border border-sky-200 bg-sky-50/70 p-6 sm:p-7">
         <h3 class="text-base font-extrabold text-sky-950">Czego nie wolno ciąć</h3>
         <div class="mt-4 grid gap-3 sm:grid-cols-2">
-          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Kontroli krzyżowej z widokiem DOM.</p>
-          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Zabezpieczeń trybu tylko do odczytu.</p>
-          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Dowodów i metadanych raportu.</p>
-          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Audytu pliku CSV przed porównaniem.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700" aria-hidden="true">✕</span>Kontroli krzyżowej z widokiem DOM.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700" aria-hidden="true">✕</span>Zabezpieczeń trybu tylko do odczytu.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700" aria-hidden="true">✕</span>Dowodów i metadanych raportu.</p>
+          <p class="flex gap-3 text-sm leading-6 text-sky-900"><span class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700" aria-hidden="true">✕</span>Audytu pliku CSV przed porównaniem.</p>
         </div>
       </div>
     </section>
@@ -654,7 +774,7 @@
     <!-- 07. Status -->
     <section id="status" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">07</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">07</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rytm pracy</span>
       </div>
@@ -665,19 +785,19 @@
 
       <div class="mt-8 grid gap-5 md:grid-cols-3">
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">📝</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl" aria-hidden="true">📝</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Notatka dzienna</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Trzy linie: co zostało zrobione, co jest następne, co blokuje. Bez spotkania, w uzgodnionym kanale.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">📊</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl" aria-hidden="true">📊</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Podsumowanie tygodniowe</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Jedna strona: postęp wobec bramek, zużyty bufor, ryzyka i decyzje potrzebne od lidera.</p>
         </article>
 
         <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">🚦</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl" aria-hidden="true">🚦</span>
           <h3 class="mt-4 text-base font-extrabold text-slate-950">Eskalacja</h3>
           <p class="mt-2 text-sm leading-6 text-slate-600">Blokada dłuższa niż jeden dzień trafia do lidera tego samego dnia. Deweloper nie czeka w ciszy.</p>
         </article>
@@ -687,7 +807,7 @@
     <!-- 08. Rekomendacja -->
     <section id="rekomendacja" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">08</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">08</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rekomendacja</span>
       </div>
@@ -699,7 +819,7 @@
       <div class="mt-8 overflow-hidden rounded-[2rem] bg-slate-950 p-7 shadow-xl shadow-slate-900/20 sm:p-9">
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
           <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
-            <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-sky-400/15 text-2xl">🗓️</span>
+            <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-sky-400/15 text-2xl" aria-hidden="true">🗓️</span>
             <div>
               <h3 class="text-xl font-extrabold text-white">Pierwszy krok: odblokować D1</h3>
               <p class="mt-2 max-w-2xl text-base leading-7 text-slate-300">
@@ -741,7 +861,7 @@
     <!-- 09. Dokumenty -->
     <section id="dokumenty" class="section-anchor mt-24">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-black tracking-[0.22em] text-sky-600">09</span>
+        <span class="text-sm font-black tracking-[0.22em] text-sky-700">09</span>
         <span class="h-px w-10 bg-sky-200"></span>
         <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Dokumenty powiązane</span>
       </div>
@@ -752,28 +872,28 @@
 
       <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         <a href="./brief.html" class="group flex flex-col rounded-[2rem] border border-amber-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-lg">🎯</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-lg" aria-hidden="true">🎯</span>
           <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-amber-800">Dokument decyzyjny</h3>
           <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Problem, cel, decyzje i rekomendacja dla lidera.</p>
           <span class="mt-4 text-sm font-extrabold text-amber-700">Otwórz →</span>
         </a>
 
         <a href="./mvp.html" class="group flex flex-col rounded-[2rem] border border-emerald-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-lg">🧩</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-lg" aria-hidden="true">🧩</span>
           <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-emerald-800">Zakres MVP</h3>
           <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Analiza MoSCoW, definicja ukończenia i założenia.</p>
           <span class="mt-4 text-sm font-extrabold text-emerald-700">Otwórz →</span>
         </a>
 
         <a href="./approach.html" class="group flex flex-col rounded-[2rem] border border-sky-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-lg">🧭</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-lg" aria-hidden="true">🧭</span>
           <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-sky-800">Podejście techniczne</h3>
           <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Siedem kroków, bezpieczeństwo, ryzyka i SWOT.</p>
           <span class="mt-4 text-sm font-extrabold text-sky-700">Otwórz →</span>
         </a>
 
         <a href="./data-contract.html" class="group flex flex-col rounded-[2rem] border border-indigo-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-soft">
-          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-lg">📐</span>
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-lg" aria-hidden="true">📐</span>
           <h3 class="mt-4 text-base font-extrabold tracking-tight text-slate-950 group-hover:text-indigo-800">Kontrakt danych</h3>
           <p class="mt-2 flex-1 text-sm leading-6 text-slate-600">Format CSV, normalizacja i przypadki brzegowe.</p>
           <span class="mt-4 text-sm font-extrabold text-indigo-700">Otwórz →</span>
@@ -794,15 +914,21 @@
 
   <footer class="border-t border-slate-200 bg-white/70">
     <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-      <p>Plan zakłada jednego dewelopera na pełnym etacie. Estymacja wymaga potwierdzenia po etapie odkrycia.</p>
+      <p>Plan zakłada jednego dewelopera na pełnym etacie. Estymacja wymaga potwierdzenia po etapie odkrycia. <span class="whitespace-nowrap">Wersja 1.0 · 5 listopada 2026</span></p>
       <div class="flex flex-wrap gap-4 font-semibold text-slate-700">
         <a href="./brief.html" class="transition hover:text-slate-950">Decyzja</a>
         <a href="./mvp.html" class="transition hover:text-slate-950">Zakres</a>
         <a href="./data-contract.html" class="transition hover:text-slate-950">Kontrakt</a>
         <a href="./q-and-a.html" class="transition hover:text-slate-950">Pytania</a>
+        <a href="./docs.html" class="transition hover:text-slate-950">Wszystkie dokumenty</a>
       </div>
     </div>
   </footer>
 
+  <script>
+    document.querySelectorAll('details.mobile-menu a').forEach((link) => {
+      link.addEventListener('click', () => link.closest('details').removeAttribute('open'));
+    });
+  </script>
 </body>
 </html>
