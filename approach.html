@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weryfikacja atrybutów encji względem pliku CSV — podejście</title>
+  <meta name="description" content="Podejście do masowej weryfikacji atrybutów kilkuset encji w starszej aplikacji opartej na jQuery i wewnętrznych punktach końcowych JSON.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+          boxShadow: {
+            soft: "0 24px 60px -20px rgba(15, 23, 42, 0.18)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-feature-settings: "ss01" on;
+    }
+
+    ::selection {
+      background: #c7d2fe;
+      color: #1e1b4b;
+    }
+
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+      mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+    }
+
+    .section-anchor {
+      scroll-margin-top: 6rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-indigo-200/50 blur-3xl"></div>
+    <div class="absolute -right-32 top-[38rem] h-[28rem] w-[28rem] rounded-full bg-sky-200/40 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl"></div>
+  </div>
+
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
+      <a href="#gora" class="flex items-center gap-3" aria-label="Przejdź do początku dokumentu">
+        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-lg text-white shadow-lg shadow-slate-900/20">✓</span>
+        <span class="hidden sm:block">
+          <span class="block text-sm font-extrabold tracking-tight text-slate-950">Weryfikacja encji</span>
+          <span class="block text-xs text-slate-500">Podejście dla starszej aplikacji</span>
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-1 rounded-full border border-slate-200 bg-white/70 p-1 text-sm font-semibold text-slate-600 shadow-sm lg:flex" aria-label="Nawigacja główna">
+        <a href="#kontekst" class="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950">Kontekst</a>
+        <a href="#podejscie" class="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950">Podejście</a>
+        <a href="#bezpieczenstwo" class="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950">Bezpieczeństwo</a>
+        <a href="#zalety" class="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950">Zalety i wady</a>
+        <a href="#swot" class="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950">SWOT</a>
+        <a href="#rekomendacja" class="rounded-full bg-slate-950 px-4 py-2 text-white transition hover:bg-slate-800">Rekomendacja</a>
+      </nav>
+
+      <a href="#rekomendacja" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
+        Rekomendacja
+      </a>
+    </div>
+  </header>
+
+  <main id="gora" class="mx-auto max-w-7xl px-6 pb-24">
+
+    <!-- Sekcja powitalna -->
+    <section class="pt-10">
+      <div class="relative overflow-hidden rounded-[2.5rem] bg-slate-950 px-7 py-12 shadow-2xl shadow-slate-900/25 sm:px-12 lg:px-16 lg:py-16">
+        <div class="hero-grid absolute inset-0" aria-hidden="true"></div>
+        <div class="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-indigo-500/30 blur-3xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-sky-400/20 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-sky-200">
+              <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+              Dokument podejścia · weryfikacja tylko do odczytu
+            </span>
+
+            <h1 class="mt-7 text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Weryfikacja atrybutów encji
+              <span class="block bg-gradient-to-r from-sky-300 via-cyan-200 to-emerald-300 bg-clip-text text-transparent">
+                względem pliku CSV
+              </span>
+            </h1>
+
+            <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+              Praktyczne podejście do masowego sprawdzania kilkuset encji w starszej aplikacji, która nie udostępnia oficjalnego API, ale komunikuje się z serwerem przez <span class="font-semibold text-white">$.post</span> i wewnętrzne punkty końcowe JSON.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🗂️</span> Kilkaset encji
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🔌</span> Brak oficjalnego API
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">⚙️</span> jQuery i $.post
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🛡️</span> Tryb tylko do odczytu
+              </span>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-8">
+            <div class="flex items-center justify-between gap-4">
+              <h2 class="text-lg font-extrabold text-white">W skrócie</h2>
+              <span class="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300">Cztery filary</span>
+            </div>
+
+            <ol class="mt-6 space-y-5">
+              <li class="flex gap-4">
+                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-sky-400/15 text-sm font-black text-sky-300">1</span>
+                <p class="text-sm leading-6 text-slate-300">Przechwyć rzeczywiste żądanie wysyłane przez aplikację.</p>
+              </li>
+              <li class="flex gap-4">
+                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-indigo-400/15 text-sm font-black text-indigo-300">2</span>
+                <p class="text-sm leading-6 text-slate-300">Odtwórz je przez <span class="font-semibold text-white">$.post</span> w kontekście zalogowanej strony.</p>
+              </li>
+              <li class="flex gap-4">
+                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-cyan-400/15 text-sm font-black text-cyan-300">3</span>
+                <p class="text-sm leading-6 text-slate-300">Porównaj stan z plikiem CSV poza aplikacją.</p>
+              </li>
+              <li class="flex gap-4">
+                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-emerald-400/15 text-sm font-black text-emerald-300">4</span>
+                <p class="text-sm leading-6 text-slate-300">Potwierdź wynik na próbce, porównując go z widokiem DOM.</p>
+              </li>
+            </ol>
+
+            <p class="mt-6 border-t border-white/10 pt-5 text-xs leading-5 text-slate-400">
+              Zasada nadrzędna: nieoficjalny punkt końcowy to źródło danych, a nie gwarantowany kontrakt.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Kontekst -->
+    <section id="kontekst" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">01</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Kontekst</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Co dokładnie weryfikujemy?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        W starszej aplikacji encja — odpowiednik etykiety <span class="font-semibold text-slate-900">„{przymiotnik} {zwierzę}”</span> — ma przypisane atrybuty, analogiczne do owoców w przykładzie. Oczekiwany stan dla każdej encji znajduje się w zewnętrznym pliku CSV. Interfejs pozwala wybrać encję i porównać jej atrybuty, ale przy kilkuset encjach ręczna weryfikacja staje się zbyt wolna, podatna na błędy i trudna do powtórzenia.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">🆔</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Tożsamość encji</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Używaj stabilnego identyfikatora, a nie etykiety „{przymiotnik} {zwierzę}”, która może się powtarzać lub zmieniać.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">🔗</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Tożsamość atrybutów</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Upewnij się, że CSV i interfejs używają tego samego identyfikatora. Przy nazwach zbuduj jawne mapowanie i wykrywaj duplikaty.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">📄</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Znaczenie pliku CSV</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Ustal, czy plik zawiera wyłącznie przypisane atrybuty, czy jawny stan każdego atrybutu. Zdefiniuj, co oznacza brak encji w CSV.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🧹</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Normalizacja danych</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Uwzględnij BOM, CRLF, cudzysłowy, duplikaty, wielkość liter i kolejność atrybutów.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 02. Podejście -->
+    <section id="podejscie" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">02</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Podejście</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Siedem kroków do wiarygodnego wyniku</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Podejście dzieli się na dwie niezależne części: pozyskanie stanu rzeczywistego z aplikacji oraz porównanie go z oczekiwanym stanem z CSV. Dzięki temu ekstrakcję można powtarzać i audytować niezależnie od samego porównania.
+      </p>
+
+      <ol class="mt-10 space-y-5">
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-900/20 sm:flex">01</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-xs font-black text-slate-700 sm:hidden">01</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Ustal kontrakt weryfikacji</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500"></span>Zdefiniuj stabilne identyfikatory encji i atrybutów.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500"></span>Ustal, czy brak encji w CSV oznacza błąd, pusty stan, czy brak pokrycia.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500"></span>Zapisz reguły normalizacji oraz sposób traktowania duplikatów i konfliktów.</li>
+            </ul>
+          </article>
+        </li>
+
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-indigo-600 text-sm font-black text-white shadow-lg shadow-indigo-600/20 sm:flex">02</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-xs font-black text-indigo-700 sm:hidden">02</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Zweryfikuj plik CSV jako dane wejściowe</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500"></span>Przekształć CSV w mapę: identyfikator encji → zbiór oczekiwanych atrybutów.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500"></span>Wykryj duplikaty, sprzeczne wiersze, nieznane encje i atrybuty oraz puste wartości.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500"></span>Oddziel błędy danych wejściowych od rzeczywistych rozbieżności w aplikacji.</li>
+            </ul>
+          </article>
+        </li>
+
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-sky-600 text-sm font-black text-white shadow-lg shadow-sky-600/20 sm:flex">03</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50 text-xs font-black text-sky-700 sm:hidden">03</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Przechwyć rzeczywiste żądanie</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Użyj panelu sieci, pliku HAR (zapisu sesji sieciowej) lub nasłuchu zdarzeń <span class="font-semibold text-slate-800">ajaxSend</span> i <span class="font-semibold text-slate-800">ajaxSuccess</span>.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Zapisz adres punktu końcowego, treść żądania, nagłówki, token CSRF i format odpowiedzi.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-500"></span>Sprawdź, czy dane są pobierane jednym żądaniem, czy doładowywane etapami.</li>
+            </ul>
+          </article>
+        </li>
+
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-cyan-600 text-sm font-black text-white shadow-lg shadow-cyan-600/20 sm:flex">04</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-50 text-xs font-black text-cyan-700 sm:hidden">04</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Odtwórz żądanie przez $.post w kontekście strony</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-cyan-500"></span>Wywołaj <span class="font-semibold text-slate-800">window.jQuery.post</span> z wnętrza uwierzytelnionej strony.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-cyan-500"></span>Zachowaj pliki cookie, tokeny CSRF, serializację i konfigurację <span class="font-semibold text-slate-800">$.ajaxSetup</span>.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-cyan-500"></span>Waliduj odpowiedź: typ JSON, zgodność identyfikatora encji i brak komunikatu błędu.</li>
+            </ul>
+          </article>
+        </li>
+
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-teal-600 text-sm font-black text-white shadow-lg shadow-teal-600/20 sm:flex">05</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-50 text-xs font-black text-teal-700 sm:hidden">05</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Wykonaj masową ekstrakcję i zapisz wyniki</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-teal-500"></span>Dla każdej encji pobierz dane i znormalizuj je do postaci encja → przypisane atrybuty.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-teal-500"></span>Zapisuj surowe odpowiedzi, aby porównanie można było powtórzyć bez odpytywania aplikacji.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-teal-500"></span>Błąd ekstrakcji traktuj jako osobny status, nigdy jako pusty zbiór atrybutów.</li>
+            </ul>
+          </article>
+        </li>
+
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-emerald-600 text-sm font-black text-white shadow-lg shadow-emerald-600/20 sm:flex">06</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-xs font-black text-emerald-700 sm:hidden">06</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Porównaj wynik z widokiem DOM</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-500"></span>Na próbce 5–10 encji porównaj dane z punktu końcowego z tym, co pokazuje interfejs.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-500"></span>Wyjaśnij różnice: paginacja, filtrowanie po stronie klienta, uprawnienia, pamięć podręczna.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-500"></span>Przyjmij, że dla użytkownika źródłem prawdy jest DOM, a punkt końcowy jedynie skrótem.</li>
+            </ul>
+          </article>
+        </li>
+
+        <li class="flex flex-col gap-5 sm:flex-row">
+          <div class="hidden h-12 w-12 flex-none items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-900/20 sm:flex">07</div>
+          <article class="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-xs font-black text-slate-700 sm:hidden">07</span>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Porównaj dane poza aplikacją i przygotuj raport</h3>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-slate-700"></span>Policz atrybuty brakujące, nadmiarowe i nieznane oraz encje nieobecne w CSV.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-slate-700"></span>Wygeneruj raport maszynowy (CSV/JSON) i czytelne podsumowanie dla człowieka.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-slate-700"></span>Klasyfikuj przyczyny: dane CSV, mapowanie identyfikatorów, błąd aplikacji lub problem techniczny.</li>
+            </ul>
+          </article>
+        </li>
+      </ol>
+
+      <!-- Przepływ danych -->
+      <div class="mt-10 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-indigo-600">Przepływ danych</p>
+            <h3 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-950">Od dwóch źródeł do jednego raportu</h3>
+          </div>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">porównanie poza aplikacją</span>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-4 lg:flex-row lg:items-stretch">
+          <div class="flex-1 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5">
+            <p class="text-xs font-bold uppercase tracking-wider text-indigo-700">Dane oczekiwane</p>
+            <p class="mt-3 text-sm font-semibold leading-6 text-slate-800">Plik CSV → walidacja → zbiór oczekiwanych atrybutów</p>
+          </div>
+
+          <div class="flex items-center justify-center text-2xl text-slate-300 lg:px-1" aria-hidden="true">
+            <span class="lg:hidden">↓</span>
+            <span class="hidden lg:block">→</span>
+          </div>
+
+          <div class="flex-1 rounded-2xl border border-sky-100 bg-sky-50/60 p-5">
+            <p class="text-xs font-bold uppercase tracking-wider text-sky-700">Dane rzeczywiste</p>
+            <p class="mt-3 text-sm font-semibold leading-6 text-slate-800">Aplikacja → $.post → JSON → normalizacja → zbiór przypisanych atrybutów</p>
+          </div>
+
+          <div class="flex items-center justify-center text-2xl text-slate-300 lg:px-1" aria-hidden="true">
+            <span class="lg:hidden">↓</span>
+            <span class="hidden lg:block">→</span>
+          </div>
+
+          <div class="flex-1 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
+            <p class="text-xs font-bold uppercase tracking-wider text-emerald-700">Wynik</p>
+            <p class="mt-3 text-sm font-semibold leading-6 text-slate-800">Porównanie zbiorów → raport rozbieżności → klasyfikacja przyczyn</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Przykład kodu -->
+      <div class="mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-indigo-600">Odtworzenie żądania</p>
+          <h3 class="mt-3 text-2xl font-extrabold tracking-tight text-slate-950">Bez ponownego implementowania transportu</h3>
+          <p class="mt-3 text-base leading-7 text-slate-600">
+            Wywołanie z wnętrza strony korzysta z tej samej sesji i konfiguracji jQuery. Opakowanie w obietnicę ujednolica obsługę starszych wersji jQuery i pozwala jawnie obsłużyć błędy.
+          </p>
+          <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+            <span class="font-bold">Ważne:</span> jeżeli jQuery nie jest dostępne globalnie, odtwórz dokładnie przechwycone żądanie XHR wraz z nagłówkami i kodowaniem treści.
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl shadow-slate-900/20">
+          <div class="flex items-center justify-between border-b border-white/10 px-5 py-3">
+            <div class="flex items-center gap-2" aria-hidden="true">
+              <span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">jQuery · $.post</span>
+          </div>
+          <pre class="overflow-x-auto p-5 text-sm leading-7 text-slate-200"><code>async function pobierzJson(url, dane) {
+  return await new Promise((resolve, reject) => {
+    window.jQuery
+      .post(url, dane, (odpowiedz) => resolve(odpowiedz), "json")
+      .fail((xhr, status, blad) => {
+        reject(new Error(`${status}: ${blad} (${xhr.status})`));
+      });
+  });
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03. Bezpieczeństwo -->
+    <section id="bezpieczenstwo" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">03</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Bezpieczeństwo</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Zasady bezpieczeństwa</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Weryfikacja powinna być wyłącznie odczytem. Nawet pojedyncze przypadkowe wywołanie zapisu może zmienić dane setek encji.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🛡️</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Konto tylko do odczytu</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Używaj konta o minimalnych uprawnieniach i roli zgodnej z zakresem weryfikacji.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">✅</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Wyłącznie operacje odczytu</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Preferuj GET. Jeśli aplikacja używa POST do odczytu, dopuść wyłącznie zidentyfikowany punkt końcowy i treść żądania.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-50 text-xl">🚫</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Blokada zapisów</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Monitoruj ruch i przerwij przebieg przy próbie wywołania punktu końcowego modyfikującego dane.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">⏱️</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Ograniczenie tempa</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Nie przeciążaj aplikacji. Kilkaset encji nie wymaga agresywnej równoległości.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">🔐</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Ochrona poświadczeń</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Nie zapisuj plików cookie ani tokenów w repozytorium. Redaguj je w plikach HAR i logach.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-xl">👁️</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Kontrola widoczności</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Pamiętaj, że uprawnienia użytkownika mogą ukrywać część atrybutów i zniekształcać wynik.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 04. Ryzyka -->
+    <section id="ryzyka" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">04</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Ryzyka</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Ryzyka i sposoby ich ograniczania</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Największym ryzykiem nie jest sama skala, lecz założenie, że nieoficjalny punkt końcowy pokazuje dokładnie to samo co interfejs.
+      </p>
+
+      <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[720px] text-left">
+            <thead class="border-b border-slate-200 bg-slate-50">
+              <tr class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                <th class="px-6 py-4">Ryzyko</th>
+                <th class="px-6 py-4">Możliwy skutek</th>
+                <th class="px-6 py-4">Ograniczenie</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm leading-6 text-slate-600">
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-5 font-semibold text-slate-900">Endpoint nieoficjalny i może się zmienić</td>
+                <td class="px-6 py-5">Błędna lub niepełna ekstrakcja</td>
+                <td class="px-6 py-5">Walidacja schematu odpowiedzi, test kontraktu i wariant zapasowy oparty na DOM.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-5 font-semibold text-slate-900">Różnice między JSON a interfejsem</td>
+                <td class="px-6 py-5">Fałszywie pozytywny lub negatywny wynik</td>
+                <td class="px-6 py-5">Kontrola krzyżowa na próbce encji przy każdym wdrożeniu.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-5 font-semibold text-slate-900">Wygasła sesja lub przekierowanie na logowanie</td>
+                <td class="px-6 py-5">Odpowiedź HTML zamiast JSON</td>
+                <td class="px-6 py-5">Sprawdzanie typu odpowiedzi, ponowne logowanie i bezpieczne ponowienie próby.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-5 font-semibold text-slate-900">Brak globalnego jQuery</td>
+                <td class="px-6 py-5">Brak możliwości wywołania $.post</td>
+                <td class="px-6 py-5">Odtworzenie przechwyconego XHR z dokładnymi nagłówkami i kodowaniem.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-5 font-semibold text-slate-900">Uprawnienia użytkownika ukrywają atrybuty</td>
+                <td class="px-6 py-5">Niepełny stan rzeczywisty</td>
+                <td class="px-6 py-5">Weryfikacja na koncie o właściwej roli i raportowanie ograniczeń widoczności.</td>
+              </tr>
+              <tr class="transition hover:bg-slate-50/70">
+                <td class="px-6 py-5 font-semibold text-slate-900">Przypadkowe wywołanie zapisu</td>
+                <td class="px-6 py-5">Zmiana danych w aplikacji</td>
+                <td class="px-6 py-5">Tryb tylko do odczytu, blokada punktów końcowych zapisu i kontrola ruchu.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05. Zalety i wady -->
+    <section id="zalety" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">05</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Zalety i wady</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Ocena kompromisu</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Podejście jest szybkie i wiernie odwzorowuje komunikację aplikacji, ale opiera się na wewnętrznej implementacji, która nie jest oficjalnym kontraktem.
+      </p>
+
+      <div class="mt-8 grid gap-5 lg:grid-cols-2">
+        <div class="rounded-[2rem] border border-emerald-200 bg-white p-7 shadow-sm sm:p-8">
+          <div class="flex items-center gap-3">
+            <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-lg font-black text-emerald-700">✓</span>
+            <div>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Zalety · mocne strony</h3>
+              <p class="text-sm text-slate-500">To, co przemawia za tym podejściem</p>
+            </div>
+          </div>
+          <ul class="mt-6 space-y-4 text-sm leading-6 text-slate-600">
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>Wykorzystuje rzeczywisty mechanizm komunikacji aplikacji, a nie jego przybliżenie.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>Zachowuje pliki cookie, tokeny CSRF, serializację danych i konfigurację $.ajaxSetup.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>Skaluje się do kilkuset encji znacznie lepiej niż ręczne klikanie w interfejsie.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>Oddziela ekstrakcję od porównania, co ułatwia powtarzanie i audyt.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>Pozwala zachować surowe odpowiedzi jako dowód dla każdego przebiegu.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>Przy zachowaniu trybu tylko do odczytu nie zmienia danych w aplikacji.</li>
+          </ul>
+        </div>
+
+        <div class="rounded-[2rem] border border-rose-200 bg-white p-7 shadow-sm sm:p-8">
+          <div class="flex items-center gap-3">
+            <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-100 text-lg font-black text-rose-700">✕</span>
+            <div>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-950">Wady · słabe strony</h3>
+              <p class="text-sm text-slate-500">To, na co trzeba uważać</p>
+            </div>
+          </div>
+          <ul class="mt-6 space-y-4 text-sm leading-6 text-slate-600">
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Opiera się na nieoficjalnych punktach końcowych, które mogą zniknąć lub zmienić format.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Wymaga analizy odwrotnej i zrozumienia wewnętrznej implementacji aplikacji.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Może pominąć logikę prezentacji wykonywaną wyłącznie po stronie przeglądarki.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Wiąże się z obsługą sesji, tokenów CSRF i wygasania uwierzytelnienia.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Nie daje gwarancji stabilności typowej dla oficjalnego kontraktu API.</li>
+            <li class="flex gap-3"><span class="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-700">✕</span>Wymaga utrzymania warstwy adaptacyjnej, walidacji schematu i testów regresyjnych.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. SWOT -->
+    <section id="swot" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">06</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Analiza SWOT</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Mocne strony, słabe strony, szanse i zagrożenia</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Ocena podejścia w kontekście starszej aplikacji, braku oficjalnego API i potrzeby weryfikacji kilkuset encji.
+      </p>
+
+      <div class="mt-8 grid gap-5 lg:grid-cols-2">
+        <article class="relative overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50/70 p-7 sm:p-8">
+          <span class="pointer-events-none absolute -right-2 -top-6 text-8xl font-black text-emerald-100">S</span>
+          <div class="relative">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Mocne strony</p>
+            <h3 class="mt-2 text-xl font-extrabold tracking-tight text-slate-950">Atuty rozwiązania</h3>
+            <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-700">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-600"></span>Duża szybkość i pełne pokrycie encji.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-600"></span>Wierne odwzorowanie transportu dzięki jQuery.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-600"></span>Powtarzalny i audytowalny proces.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-600"></span>Niska ingerencja w aplikację.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-emerald-600"></span>Możliwość zatrzymania przebiegu bez zmian w danych.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="relative overflow-hidden rounded-[2rem] border border-amber-200 bg-amber-50/70 p-7 sm:p-8">
+          <span class="pointer-events-none absolute -right-2 -top-6 text-8xl font-black text-amber-100">W</span>
+          <div class="relative">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-amber-700">Słabe strony</p>
+            <h3 class="mt-2 text-xl font-extrabold tracking-tight text-slate-950">Ograniczenia rozwiązania</h3>
+            <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-700">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-amber-600"></span>Zależność od nieudokumentowanych punktów końcowych.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-amber-600"></span>Ryzyko pominięcia logiki klienta.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-amber-600"></span>Złożoność związana ze starymi wersjami jQuery.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-amber-600"></span>Konieczność utrzymania własnej warstwy adaptacyjnej.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-amber-600"></span>Ograniczona przenośność między modułami.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="relative overflow-hidden rounded-[2rem] border border-sky-200 bg-sky-50/70 p-7 sm:p-8">
+          <span class="pointer-events-none absolute -right-2 -top-6 text-8xl font-black text-sky-100">O</span>
+          <div class="relative">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-sky-700">Szanse</p>
+            <h3 class="mt-2 text-xl font-extrabold tracking-tight text-slate-950">Możliwości rozwoju</h3>
+            <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-700">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-600"></span>Automatyzacja w cyklu nocnym lub w potoku CI.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-600"></span>Szybsze wykrywanie rozjazdów między CSV a aplikacją.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-600"></span>Ujednolicenie raportowania dla wielu modułów starszego systemu.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-600"></span>Wykorzystanie sprawdzonego wzorca w innych obszarach.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-sky-600"></span>Podstawa do późniejszego wprowadzenia oficjalnego API.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="relative overflow-hidden rounded-[2rem] border border-rose-200 bg-rose-50/70 p-7 sm:p-8">
+          <span class="pointer-events-none absolute -right-2 -top-6 text-8xl font-black text-rose-100">T</span>
+          <div class="relative">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-rose-700">Zagrożenia</p>
+            <h3 class="mt-2 text-xl font-extrabold tracking-tight text-slate-950">Czynniki ryzyka</h3>
+            <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-700">
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-600"></span>Zmiana punktów końcowych bez zapowiedzi.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-600"></span>Ograniczenia bezpieczeństwa i limity zapytań.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-600"></span>Wyciek danych uwierzytelniających.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-600"></span>Fałszywe poczucie poprawności przy błędnym mapowaniu.</li>
+              <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-rose-600"></span>Nieoczekiwane operacje zapisu przez źle sklasyfikowany punkt końcowy.</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 07. Rekomendacja -->
+    <section id="rekomendacja" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-indigo-600">07</span>
+        <span class="h-px w-10 bg-indigo-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rekomendacja</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Rekomendacja wdrożenia</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Zacznij od małego, kontrolowanego przebiegu. Dopiero po potwierdzeniu zgodności danych z interfejsem uruchamiaj weryfikację na pełnym zbiorze.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Krok 1</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Przechwyć jedno żądanie</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Zapisz adres URL, treść żądania, nagłówki i przykładową odpowiedź dla dwóch lub trzech encji.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Krok 2</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Zbuduj warstwę adaptacyjną z walidacją</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Dodaj kontrolę schematu, sprawdzanie identyfikatora encji i wariant zapasowy oparty na DOM.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Krok 3</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Przeprowadź pilotaż</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Porównaj 5–10 encji z interfejsem, w tym przypadki puste, pełne i z nieznanymi identyfikatorami.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Krok 4</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Uruchom pełny przebieg</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Pobierz dane wszystkich encji, porównaj z CSV i sklasyfikuj rozbieżności.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Krok 5</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Ustal rytm weryfikacji</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Uruchamiaj proces cyklicznie, śledź zmiany punktów końcowych i archiwizuj raporty.</p>
+        </article>
+      </div>
+
+      <div class="mt-8 overflow-hidden rounded-[2rem] bg-slate-950 p-7 shadow-xl shadow-slate-900/20 sm:p-9">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
+          <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-emerald-400/15 text-2xl">🎯</span>
+          <div>
+            <h3 class="text-xl font-extrabold text-white">Najważniejsza zasada</h3>
+            <p class="mt-2 max-w-4xl text-base leading-7 text-slate-300">
+              Nie zakładaj, że nieoficjalny punkt końcowy pokazuje dokładnie to samo co interfejs. Niewielka kontrola krzyżowa przy każdym przebiegu jest najtańszym sposobem utrzymania wiarygodności wyniku.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white/70">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>Dokument opisuje wyłącznie podejście do weryfikacji. Nie zawiera zmian w aplikacji.</p>
+      <p class="font-semibold text-slate-700">Weryfikacja atrybutów encji · starsza aplikacja</p>
+    </div>
+  </footer>
+
+</body>
+</html>

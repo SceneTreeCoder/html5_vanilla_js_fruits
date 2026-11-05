@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVP weryfikacji atrybutów encji — analiza MoSCoW</title>
+  <meta name="description" content="Analiza MoSCoW zakresu pierwszej wersji narzędzia do weryfikacji atrybutów encji względem pliku CSV w starszej aplikacji opartej na jQuery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+          boxShadow: {
+            soft: "0 24px 60px -20px rgba(15, 23, 42, 0.18)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-feature-settings: "ss01" on;
+    }
+
+    ::selection {
+      background: #a7f3d0;
+      color: #064e3b;
+    }
+
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+      mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+    }
+
+    .section-anchor {
+      scroll-margin-top: 6rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-emerald-200/40 blur-3xl"></div>
+    <div class="absolute -right-32 top-[38rem] h-[28rem] w-[28rem] rounded-full bg-sky-200/40 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-indigo-200/40 blur-3xl"></div>
+  </div>
+
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
+      <a href="#gora" class="flex items-center gap-3" aria-label="Przejdź do początku dokumentu">
+        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-900/20">M</span>
+        <span class="hidden sm:block">
+          <span class="block text-sm font-extrabold tracking-tight text-slate-950">Zakres MVP</span>
+          <span class="block text-xs text-slate-500">Analiza MoSCoW</span>
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-1 rounded-full border border-slate-200 bg-white/70 p-1 text-sm font-semibold text-slate-600 shadow-sm lg:flex" aria-label="Nawigacja główna">
+        <a href="#kontekst" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Kontekst</a>
+        <a href="#moscow" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">MoSCoW</a>
+        <a href="#ukonczenie" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Ukończenie</a>
+        <a href="#zalozenia" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Założenia</a>
+        <a href="#kolejnosc" class="rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950">Kolejność</a>
+        <a href="#rekomendacja" class="rounded-full bg-slate-950 px-3 py-2 text-white transition hover:bg-slate-800">Rekomendacja</a>
+      </nav>
+
+      <a href="#rekomendacja" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 lg:hidden">
+        Rekomendacja
+      </a>
+    </div>
+  </header>
+
+  <main id="gora" class="mx-auto max-w-7xl px-6 pb-24">
+
+    <!-- Sekcja powitalna -->
+    <section class="pt-10">
+      <div class="relative overflow-hidden rounded-[2.5rem] bg-slate-950 px-7 py-12 shadow-2xl shadow-slate-900/25 sm:px-12 lg:px-16 lg:py-16">
+        <div class="hero-grid absolute inset-0" aria-hidden="true"></div>
+        <div class="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-emerald-500/25 blur-3xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-sky-400/20 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-emerald-200">
+              <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+              Dokument zakresu · pierwsze wdrożenie
+            </span>
+
+            <h1 class="mt-7 text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              MVP weryfikacji atrybutów encji
+              <span class="block bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent">
+                analiza MoSCoW
+              </span>
+            </h1>
+
+            <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+              Co musi znaleźć się w pierwszej wersji narzędzia, co warto dodać później, a co świadomie odkładamy poza zakres — aby szybko dostarczyć wiarygodny wynik bez rozrostu projektu.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🧩</span> 28 elementów zakresu
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🟢</span> 8 pozycji krytycznych
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🛡️</span> Tryb tylko do odczytu
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200">
+                <span class="text-base">🗂️</span> Kilkaset encji
+              </span>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-8">
+            <div class="flex items-center justify-between gap-4">
+              <h2 class="text-lg font-extrabold text-white">MVP w jednym zdaniu</h2>
+              <span class="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300">Cel</span>
+            </div>
+
+            <p class="mt-5 text-base leading-7 text-slate-200">
+              Powtarzalny, bezpieczny i audytowalny przebieg, który dla każdej encji z pliku CSV podaje wynik: zgodna, niezgodna lub błąd ekstrakcji — wraz z dowodami.
+            </p>
+
+            <div class="mt-6 space-y-4 border-t border-white/10 pt-5">
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-400/15 text-xs font-black text-emerald-300">1</span>
+                <p class="text-sm leading-6 text-slate-300">Bez zapisu danych do aplikacji.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-400/15 text-xs font-black text-emerald-300">2</span>
+                <p class="text-sm leading-6 text-slate-300">Bez oficjalnego API i bez zmian w starszej aplikacji.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-400/15 text-xs font-black text-emerald-300">3</span>
+                <p class="text-sm leading-6 text-slate-300">Z kontrolą krzyżową danych względem widoku DOM.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Kontekst -->
+    <section id="kontekst" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">01</span>
+        <span class="h-px w-10 bg-emerald-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Kontekst</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Czym jest MVP w tym projekcie?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        MVP nie jest pełnym produktem ani zamiennikiem panelu administracyjnego. To najmniejszy spójny zestaw funkcji, który pozwala w trybie tylko do odczytu sprawdzić atrybuty wszystkich encji z pliku CSV, wskazać różnice i uzasadnić każdy wynik dowodem.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🎯</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Cel</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Powtarzalna weryfikacja atrybutów wszystkich encji z pliku CSV względem stanu w aplikacji.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">👥</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Odbiorca</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Zespół danych, testów i opiekun starszej aplikacji, który potrzebuje wiarygodnego raportu rozbieżności.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">📐</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Granica</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Odczyt przez istniejące punkty końcowe i sesję użytkownika. Bez zapisu i bez modyfikacji aplikacji.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">✅</span>
+          <h3 class="mt-5 text-base font-extrabold text-slate-950">Sukces</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Każda encja ma jednoznaczny wynik i dowód, a cały przebieg można odtworzyć z konfiguracji.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6 text-sm leading-6 text-emerald-900 sm:p-7">
+        <span class="font-extrabold">Zasada zakresu:</span> najpierw wiarygodność i bezpieczeństwo, potem wygoda. Elementy, które nie wzmacniają zaufania do wyniku, nie należą do pierwszej wersji.
+      </div>
+    </section>
+
+    <!-- 02. MoSCoW -->
+    <section id="moscow" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">02</span>
+        <span class="h-px w-10 bg-emerald-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Analiza MoSCoW</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Podział zakresu według wartości i ryzyka</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Metoda MoSCoW porządkuje wymagania w czterech kategoriach: <span class="font-semibold text-slate-900">M — musi mieć</span>, <span class="font-semibold text-slate-900">S — powinno mieć</span>, <span class="font-semibold text-slate-900">C — może mieć</span> oraz <span class="font-semibold text-slate-900">W — nie znajdzie się w MVP</span>. Poniżej znajduje się pełna lista z uzasadnieniem i kryteriami akceptacji.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#musi" class="group rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
+          <div class="flex items-center justify-between">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-600 text-sm font-black text-white">M</span>
+            <span class="text-2xl font-black text-emerald-700">8</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-emerald-800">Musi mieć</h3>
+          <p class="mt-1 text-sm leading-6 text-emerald-900/80">Rdzeń, bez którego MVP nie istnieje.</p>
+        </a>
+
+        <a href="#powinno" class="group rounded-3xl border border-sky-200 bg-sky-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
+          <div class="flex items-center justify-between">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-600 text-sm font-black text-white">S</span>
+            <span class="text-2xl font-black text-sky-700">7</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-sky-800">Powinno mieć</h3>
+          <p class="mt-1 text-sm leading-6 text-sky-900/80">Ważne dla stabilności, ale nie blokuje startu.</p>
+        </a>
+
+        <a href="#moze" class="group rounded-3xl border border-amber-200 bg-amber-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
+          <div class="flex items-center justify-between">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 text-sm font-black text-white">C</span>
+            <span class="text-2xl font-black text-amber-700">6</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-amber-800">Może mieć</h3>
+          <p class="mt-1 text-sm leading-6 text-amber-900/80">Wartość dodana po potwierdzeniu rdzenia.</p>
+        </a>
+
+        <a href="#nie" class="group rounded-3xl border border-rose-200 bg-rose-50/70 p-5 transition hover:-translate-y-1 hover:shadow-soft">
+          <div class="flex items-center justify-between">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-600 text-sm font-black text-white">W</span>
+            <span class="text-2xl font-black text-rose-700">7</span>
+          </div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950 group-hover:text-rose-800">Nie teraz</h3>
+          <p class="mt-1 text-sm leading-6 text-rose-900/80">Świadomie poza zakresem pierwszej wersji.</p>
+        </a>
+      </div>
+
+      <!-- M — Musi mieć -->
+      <div id="musi" class="section-anchor mt-16">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-emerald-800">M · Musi mieć</span>
+            <h3 class="mt-3 text-2xl font-black tracking-tight text-slate-950">Fundament wiarygodnego wyniku</h3>
+            <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">Bez tych elementów nie można uznać weryfikacji za kompletną, bezpieczną ani powtarzalną.</p>
+          </div>
+          <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">8 elementów</span>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M1</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Słownik i mapowanie identyfikatorów</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Jednoznaczne powiązanie encji i atrybutów między CSV a aplikacją, oparte na stabilnych identyfikatorach, a nie etykietach.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> każdy wiersz CSV można przypisać do encji i atrybutu bez zgadywania.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M2</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Parser i audyt pliku CSV</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Wczytanie pliku, normalizacja oraz wykrycie duplikatów, konfliktów, nieznanych identyfikatorów i pustych wartości.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> raport wejściowy wskazuje wszystkie problemy w CSV przed ekstrakcją.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M3</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Odczyt przez $.post w kontekście strony</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Pobranie stanu encji przez ten sam transport i sesję, których używa aplikacja, bez reimplementacji plików cookie i tokenów CSRF.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> dla encji pilotowej odpowiedź jest zgodna z żądaniem wywołanym z interfejsu.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M4</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Normalizacja i zapis dowodów</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Przekształcenie odpowiedzi do postaci encja → zbiór atrybutów oraz zachowanie surowych danych źródłowych.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> każdy wynik można prześledzić od surowej odpowiedzi do porównania.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M5</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Silnik porównania</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Obliczenie braków, nadmiarów, nieznanych identyfikatorów, encji nieobecnych w CSV i błędów ekstrakcji.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> dla każdej encji powstaje dokładnie jeden jednoznaczny wynik.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M6</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Raport wyników</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Maszynowy plik CSV/JSON oraz czytelne podsumowanie dla człowieka, z konkretnymi różnicami dla każdej encji.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> raport zawiera liczby, wyniki i listę brakujących oraz nadmiarowych atrybutów.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M7</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Kontrola krzyżowa z widokiem DOM</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Porównanie danych z punktu końcowego z tym, co faktycznie pokazuje interfejs, na próbce encji.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> pilot 5–10 encji nie wykazuje nieuzasadnionych różnic między źródłami.</p>
+          </article>
+
+          <article class="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-xs font-black text-white">M8</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Krytyczne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Zabezpieczenia trybu tylko do odczytu</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Konto o minimalnych uprawnieniach, blokada zapisów, ograniczenie tempa i redakcja danych uwierzytelniających.</p>
+            <p class="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-900"><span class="font-extrabold">Kryterium:</span> przebieg nie wykonuje żadnej operacji modyfikującej dane.</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- S — Powinno mieć -->
+      <div id="powinno" class="section-anchor mt-16">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-800">S · Powinno mieć</span>
+            <h3 class="mt-3 text-2xl font-black tracking-tight text-slate-950">Stabilność i wygoda użytkowania</h3>
+            <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">Te elementy znacząco poprawiają jakość, ale można dostarczyć MVP bez nich, jeśli ograniczy to ryzyko lub czas startu.</p>
+          </div>
+          <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">7 elementów</span>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S1</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Konfiguracja i uruchamianie z wiersza poleceń</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Uruchomienie jednym poleceniem z parametrami: środowisko, ścieżka CSV i katalog wyników.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> przebieg można powtórzyć bez edycji kodu.</p>
+          </article>
+
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S2</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Pamięć podręczna surowych odpowiedzi</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Możliwość ponownego porównania bez odpytywania aplikacji i zachowania dowodów z pierwszego przebiegu.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> drugi przebieg na pamięci podręcznej daje identyczny raport.</p>
+          </article>
+
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S3</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Walidacja schematu i wykrywanie zmian</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Kontrola wymaganych pól i czytelny błąd, gdy wewnętrzny punkt końcowy zmieni format odpowiedzi.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> zmiana formatu zatrzymuje przebieg zamiast tworzyć puste zbiory.</p>
+          </article>
+
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S4</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Obsługa wygaśnięcia sesji</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Wykrywanie przekierowania na logowanie, kontrolowane ponowienie i przerwanie przebiegu zamiast cichych błędów.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> wygasła sesja nie powoduje fałszywego wyniku.</p>
+          </article>
+
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S5</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Metadane i logi przebiegu</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Zapis daty, sumy kontrolnej pliku CSV, wersji narzędzia i identyfikatora środowiska.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> każdy raport można jednoznacznie przypisać do danych wejściowych.</p>
+          </article>
+
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S6</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Wariant awaryjny oparty na DOM</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Alternatywne pozyskanie stanu, gdy wewnętrzny punkt końcowy jest chwilowo niedostępny.</p>
+            <p class="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> co najmniej jedna encja przechodzi ścieżkę awaryjną w teście.</p>
+          </article>
+
+          <article class="rounded-3xl border border-sky-200 bg-white p-6 shadow-sm md:col-span-2">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-xs font-black text-white">S7</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Ważne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Klasyfikacja rozbieżności</h4>
+            <p class="mt-2 max-w-4xl text-sm leading-6 text-slate-600">Przypisanie różnic do kategorii: dane CSV, mapowanie identyfikatorów, błąd aplikacji lub problem techniczny, wraz ze wskazaniem właściciela do dalszej analizy.</p>
+            <p class="mt-4 max-w-4xl rounded-2xl bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><span class="font-extrabold">Kryterium:</span> każda niezgodność ma kategorię i nie wymaga ręcznego sortowania od zera.</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- C — Może mieć -->
+      <div id="moze" class="section-anchor mt-16">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-amber-800">C · Może mieć</span>
+            <h3 class="mt-3 text-2xl font-black tracking-tight text-slate-950">Wartość dodana po potwierdzeniu rdzenia</h3>
+            <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">Elementy, które zwiększają wygodę lub skalę, ale nie są potrzebne, aby pierwsza wersja była poprawna.</p>
+          </div>
+          <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">6 elementów</span>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C1</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Raport HTML z filtrami</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Wygodne przeglądanie wyników i filtrowanie po encji, wyniku oraz typie różnicy.</p>
+            <p class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><span class="font-extrabold">Kiedy dodać:</span> gdy odbiorcy regularnie przeglądają raport ręcznie.</p>
+          </article>
+
+          <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C2</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Równoległość z limitem</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Skrócenie czasu przebiegu przy zachowaniu kontroli nad obciążeniem starszej aplikacji.</p>
+            <p class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><span class="font-extrabold">Kiedy dodać:</span> gdy przebieg sekwencyjny okaże się zbyt wolny.</p>
+          </article>
+
+          <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C3</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Przebiegi przyrostowe</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Weryfikacja tylko encji zmienionych od ostatniego przebiegu, zamiast pełnego zestawu.</p>
+            <p class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><span class="font-extrabold">Kiedy dodać:</span> gdy pełny przebieg będzie uruchamiany bardzo często.</p>
+          </article>
+
+          <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C4</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Historia i trendy</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Śledzenie liczby rozbieżności w czasie i wykrywanie regresji po wdrożeniach.</p>
+            <p class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><span class="font-extrabold">Kiedy dodać:</span> po ustabilizowaniu formatu raportów.</p>
+          </article>
+
+          <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C5</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Powiadomienia o rozbieżnościach</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Automatyczna informacja e-mail lub przez komunikator o nowych niezgodnościach.</p>
+            <p class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><span class="font-extrabold">Kiedy dodać:</span> gdy raporty będą uruchamiane cyklicznie.</p>
+          </article>
+
+          <article class="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-xs font-black text-white">C6</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Opcjonalne</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Zrzuty ekranu i DOM dla błędów</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Dodatkowy dowód wizualny ułatwiający diagnozę problemów z pojedynczymi encjami.</p>
+            <p class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><span class="font-extrabold">Kiedy dodać:</span> gdy błędy ekstrakcji okażą się trudne do odtworzenia.</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- W — Nie teraz -->
+      <div id="nie" class="section-anchor mt-16">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-rose-100 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-rose-800">W · Nie teraz</span>
+            <h3 class="mt-3 text-2xl font-black tracking-tight text-slate-950">Świadomie poza zakresem MVP</h3>
+            <p class="mt-2 max-w-3xl text-base leading-7 text-slate-600">Wykluczenia chronią pierwszą wersję przed rozrostem. Każde z nich może wrócić jako osobny etap po potwierdzeniu wartości MVP.</p>
+          </div>
+          <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">7 elementów</span>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W1</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Oficjalne API w starszej aplikacji</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Wymaga zmian po stronie systemu. MVP korzysta z istniejącego transportu i nie modyfikuje aplikacji.</p>
+            <p class="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> zbyt duża zależność i czas realizacji poza kontrolą zespołu.</p>
+          </article>
+
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W2</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Automatyczne poprawianie danych</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">MVP tylko wykrywa i raportuje różnice. Nie zapisuje poprawek do aplikacji.</p>
+            <p class="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> zbyt wysokie ryzyko zmiany danych setek encji bez pełnej kontroli.</p>
+          </article>
+
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W3</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Monitorowanie w czasie rzeczywistym</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">MVP działa wsadowo. Stałe monitorowanie to osobny produkt z własną infrastrukturą.</p>
+            <p class="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> nie jest potrzebne do jednorazowego, wiarygodnego przebiegu.</p>
+          </article>
+
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W4</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Zastąpienie panelu administracyjnego</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Narzędzie ma weryfikować dane, a nie zarządzać encjami ani edytować ich atrybutów.</p>
+            <p class="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> to inny produkt i inny zakres odpowiedzialności.</p>
+          </article>
+
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W5</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Wsparcie wielu środowisk i dzierżawców</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Zakres ograniczony do jednej instancji, jednego zestawu CSV i jednego profilu odczytu.</p>
+            <p class="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> wielokrotność środowisk zwielokrotnia konfigurację i ryzyko mapowania.</p>
+          </article>
+
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W6</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Pełna macierz uprawnień</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-600">MVP weryfikuje jeden profil odczytu, a nie wszystkie role i kombinacje widoczności atrybutów.</p>
+            <p class="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> pełna macierz znacząco zwiększa liczbę przebiegów i interpretacji.</p>
+          </article>
+
+          <article class="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm md:col-span-2">
+            <div class="flex items-center justify-between gap-4">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-xs font-black text-white">W7</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Poza zakresem</span>
+            </div>
+            <h4 class="mt-4 text-lg font-extrabold text-slate-950">Testy wydajnościowe i obciążeniowe</h4>
+            <p class="mt-2 max-w-4xl text-sm leading-6 text-slate-600">Celem MVP jest poprawność weryfikacji, a nie porównanie wydajności starszej aplikacji ani badanie jej limitów.</p>
+            <p class="mt-4 max-w-4xl rounded-2xl bg-rose-50 px-4 py-3 text-xs leading-5 text-rose-900"><span class="font-extrabold">Dlaczego nie teraz:</span> to osobny obszar jakości, który nie wpływa na wiarygodność pierwszego wyniku.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03. Definicja ukończenia -->
+    <section id="ukonczenie" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">03</span>
+        <span class="h-px w-10 bg-emerald-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Definicja ukończenia</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Kiedy MVP jest naprawdę gotowe?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        MVP kończy się w momencie, gdy wynik jest kompletny, bezpieczny i możliwy do obrony przed odbiorcą. Sama ekstrakcja danych nie wystarcza.
+      </p>
+
+      <div class="mt-8 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <ul class="grid gap-4 sm:grid-cols-2">
+          <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            Wszystkie encje z pliku CSV mają wynik: zgodna, niezgodna, brak w CSV lub błąd ekstrakcji.
+          </li>
+          <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            Pilot 5–10 encji potwierdza zgodność danych z punktu końcowego z widokiem DOM.
+          </li>
+          <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            Raport zawiera oczekiwane i rzeczywiste zbiory oraz konkretne różnice dla każdej encji.
+          </li>
+          <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            Przebieg jest powtarzalny z konfiguracji i nie wymaga edycji kodu.
+          </li>
+          <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            W całym przebiegu nie wykonano żadnej operacji zapisu do aplikacji.
+          </li>
+          <li class="flex gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700">✓</span>
+            Znane ograniczenia, założenia i wariant awaryjny są opisane w dokumentacji.
+          </li>
+        </ul>
+      </div>
+
+      <div class="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6 text-sm leading-6 text-emerald-900 sm:p-7">
+        <span class="font-extrabold">Test odbioru:</span> osoba spoza zespołu implementującego powinna na podstawie raportu i dokumentacji wskazać, które encje są niezgodne, dlaczego i gdzie znajduje się dowód.
+      </div>
+    </section>
+
+    <!-- 04. Założenia -->
+    <section id="zalozenia" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">04</span>
+        <span class="h-px w-10 bg-emerald-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Założenia i zależności</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Na czym opiera się zakres MVP?</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Zakres jest realny tylko przy spełnieniu poniższych założeń. Jeśli któreś z nich nie jest prawdziwe, trzeba je rozstrzygnąć przed rozpoczęciem implementacji.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-xl">🆔</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Stabilne identyfikatory</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">CSV i aplikacja pozwalają jednoznacznie wskazać encję oraz atrybut bez opierania się na nazwach wyświetlanych.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-xl">🔑</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Dostęp do odczytu</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Istnieje konto lub sesja o uprawnieniach wystarczających do odczytu wszystkich wymaganych encji.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-xl">🔌</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Dostępność punktów końcowych</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Wewnętrzne punkty końcowe działają w środowisku weryfikacyjnym i zwracają dane potrzebne do porównania.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-xl">🧱</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Brak zmian w starszej aplikacji</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">MVP nie wymaga nowego API, migracji ani modyfikacji kodu po stronie systemu.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-50 text-xl">👤</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Właściciel danych</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Jest osoba odpowiedzialna za aktualność pliku CSV i klasyfikację zgłoszonych rozbieżności.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-50 text-xl">🎛️</span>
+          <h3 class="mt-4 text-base font-extrabold text-slate-950">Jedna instancja</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Zakres obejmuje jedno środowisko, jeden zestaw CSV i jeden profil uprawnień.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 05. Kolejność -->
+    <section id="kolejnosc" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">05</span>
+        <span class="h-px w-10 bg-emerald-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Kolejność realizacji</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Od jednej encji do pełnego raportu</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Kolejność jest częścią zakresu MVP. Najpierw potwierdzamy transport i pojedynczą encję, dopiero potem skalujemy przebieg.
+      </p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 1</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Odkrycie</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Przechwycenie żądania, dokumentacja kontraktu i próbka 2–3 encji.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 2</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Rdzeń</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Parser CSV, ekstrakcja, normalizacja i silnik porównania.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 3</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Raport</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Wyniki, dowody, podsumowanie i klasyfikacja rozbieżności.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 4</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Pilot</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">5–10 encji, kontrola DOM, poprawki i potwierdzenie wiarygodności.</p>
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-600">Etap 5</span>
+          <h3 class="mt-3 text-base font-extrabold text-slate-950">Odbiór</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Spełnienie definicji ukończenia, dokumentacja i przekazanie.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 06. Rekomendacja -->
+    <section id="rekomendacja" class="section-anchor mt-24">
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-black tracking-[0.22em] text-emerald-600">06</span>
+        <span class="h-px w-10 bg-emerald-200"></span>
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Rekomendacja</span>
+      </div>
+      <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Rekomendacja zakresu</h2>
+      <p class="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+        Nie dodawaj wygody, dopóki nie masz wiarygodności. Najpierw pełny, bezpieczny i powtarzalny przebieg na próbce, potem raport HTML, równoległość i historia.
+      </p>
+
+      <div class="mt-8 overflow-hidden rounded-[2rem] bg-slate-950 p-7 shadow-xl shadow-slate-900/20 sm:p-9">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+          <span class="flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-emerald-400/15 text-2xl">🚀</span>
+          <div>
+            <h3 class="text-xl font-extrabold text-white">Pierwszy kamień milowy</h3>
+            <p class="mt-2 max-w-4xl text-base leading-7 text-slate-300">
+              Jedna encja pobrana przez <span class="font-semibold text-white">$.post</span>, porównana z CSV i potwierdzona w widoku DOM. To najmniejszy dowód, że całe podejście działa.
+            </p>
+            <div class="mt-5 flex flex-wrap gap-2">
+              <span class="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-300">Musi mieć</span>
+              <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-300">Bez zapisu</span>
+              <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-300">Z dowodem</span>
+              <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-300">Do powtórzenia</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6">
+          <h3 class="text-base font-extrabold text-emerald-950">Co wchodzi do MVP</h3>
+          <p class="mt-2 text-sm leading-6 text-emerald-900">Osiem elementów „musi mieć”, siedem „powinno mieć” oraz jasna definicja ukończenia i założenia.</p>
+        </div>
+        <div class="rounded-3xl border border-rose-200 bg-rose-50/70 p-6">
+          <h3 class="text-base font-extrabold text-rose-950">Co świadomie odkładamy</h3>
+          <p class="mt-2 text-sm leading-6 text-rose-900">Zapis danych, oficjalne API, monitoring, pełna macierz uprawnień i testy wydajnościowe.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white/70">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>Dokument opisuje zakres MVP i analizę MoSCoW. Nie zawiera zmian w aplikacji.</p>
+      <p class="font-semibold text-slate-700">Weryfikacja atrybutów encji · zakres pierwszej wersji</p>
+    </div>
+  </footer>
+
+</body>
+</html>

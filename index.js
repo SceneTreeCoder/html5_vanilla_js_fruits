@@ -188,6 +188,36 @@ function ensureStyles() {
       background: #1e40af;
     }
 
+    .layer-button.secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .layer-button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    .fruit-summary {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 560px;
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .fruit-summary-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
     .layer-message {
       display: flex;
       flex-direction: column;
@@ -264,14 +294,24 @@ function getSelectedIds(list) {
     .sort((a, b) => a - b);
 }
 
+let pendingSync = null;
+
+function clearPendingSync() {
+  if (!pendingSync) return;
+
+  for (const item of pendingSync.items) {
+    item.classList.remove("clsNeedsCheck", "clsNeedsUncheck");
+  }
+  pendingSync.panel.remove();
+  pendingSync = null;
+}
+
 function closeLayer() {
   const layer = document.getElementById("layer");
   if (layer) {
     layer.remove();
   }
-  document
-    .querySelectorAll(".clsNeedsCheck, .clsNeedsUncheck")
-    .forEach((item) => item.classList.remove("clsNeedsCheck", "clsNeedsUncheck"));
+  clearPendingSync();
   document.removeEventListener("keydown", onLayerKeydown);
 }
 
@@ -329,6 +369,76 @@ function appendDiffRow(container, label, ids, className) {
   container.appendChild(row);
 }
 
+function showSyncSummary(list, target, toCheck, toUncheck, unknown) {
+  clearPendingSync();
+
+  const items = [...list.children];
+
+  for (const item of items) {
+    const id = Number(item.dataset.id);
+    const shouldSelect = target.has(id);
+    const wasSelected = item.classList.contains("clsSelected");
+
+    item.classList.remove("clsNeedsCheck", "clsNeedsUncheck");
+
+    if (shouldSelect && !wasSelected) {
+      item.classList.add("clsNeedsCheck");
+    } else if (!shouldSelect && wasSelected) {
+      item.classList.add("clsNeedsUncheck");
+    }
+  }
+
+  const panel = document.createElement("div");
+  panel.className = "fruit-summary";
+
+  const title = document.createElement("h2");
+  title.className = "fruit-summary-title";
+  title.textContent = "Compare summary";
+
+  const message = document.createElement("div");
+  message.className = "layer-message";
+
+  appendDiffRow(message, "Checked (were missing)", toCheck, "diff-check");
+  appendDiffRow(message, "Unchecked (were extra)", toUncheck, "diff-uncheck");
+
+  if (unknown.length) {
+    appendDiffRow(message, "Unknown ids (ignored)", unknown, "diff-unknown");
+  }
+
+  if (!toCheck.length && !toUncheck.length && !unknown.length) {
+    message.textContent = "Already in sync.";
+  }
+
+  const actionsRow = document.createElement("div");
+  actionsRow.className = "layer-actions";
+
+  const apply = document.createElement("button");
+  apply.type = "button";
+  apply.className = "layer-button";
+  apply.textContent = "apply";
+  apply.addEventListener("click", () => {
+    for (const item of items) {
+      item.classList.toggle("clsSelected", target.has(Number(item.dataset.id)));
+    }
+    clearPendingSync();
+  });
+
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.className = "layer-button secondary";
+  cancel.textContent = "cancel";
+  cancel.addEventListener("click", clearPendingSync);
+
+  actionsRow.append(apply, cancel);
+  panel.append(title, message, actionsRow);
+
+  const card = list.parentElement;
+  card.insertBefore(panel, card.querySelector(".fruit-actions"));
+
+  pendingSync = { panel, items };
+  panel.scrollIntoView({ block: "center" });
+}
+
 function renderActions(list, label, adjectives, animals) {
   const actions = document.createElement("div");
   actions.className = "fruit-actions";
@@ -356,7 +466,10 @@ function renderActions(list, label, adjectives, animals) {
   randomizeButton.type = "button";
   randomizeButton.textContent = "🎲 randomize";
   randomizeButton.addEventListener("click", () => {
-    label.textContent = `${randomItem(adjectives)} ${randomItem(animals)}`;
+    const name = label.querySelector(".fruit-avatar-name");
+    if (name) {
+      name.textContent = `${randomItem(adjectives)} ${randomItem(animals)}`;
+    }
 
     for (const item of list.children) {
       item.classList.toggle("clsSelected", Math.random() < SELECTED_CHANCE);
@@ -365,7 +478,7 @@ function renderActions(list, label, adjectives, animals) {
 
   const exportButton = document.createElement("button");
   exportButton.type = "button";
-  exportButton.textContent = "export";
+  exportButton.textContent = "📤 export";
   exportButton.addEventListener("click", () => {
     const layer = openLayer("Export", () => {
       const textarea = document.createElement("textarea");
@@ -383,7 +496,7 @@ function renderActions(list, label, adjectives, animals) {
 
   const importButton = document.createElement("button");
   importButton.type = "button";
-  importButton.textContent = "import";
+  importButton.textContent = "📥 import";
   importButton.addEventListener("click", () => {
     const layer = openLayer("Import", () => {
       const textarea = document.createElement("textarea");
@@ -429,31 +542,8 @@ function renderActions(list, label, adjectives, animals) {
           .sort((a, b) => a - b);
         const toUncheck = selectedBefore.filter((id) => !target.has(id));
 
-        for (const item of items) {
-          const id = Number(item.dataset.id);
-          const shouldSelect = target.has(id);
-          const wasSelected = item.classList.contains("clsSelected");
-
-          item.classList.remove("clsNeedsCheck", "clsNeedsUncheck");
-          item.classList.toggle("clsSelected", shouldSelect);
-
-          if (shouldSelect && !wasSelected) {
-            item.classList.add("clsNeedsCheck");
-          } else if (!shouldSelect && wasSelected) {
-            item.classList.add("clsNeedsUncheck");
-          }
-        }
-
-        appendDiffRow(message, "Checked (were missing)", toCheck, "diff-check");
-        appendDiffRow(message, "Unchecked (were extra)", toUncheck, "diff-uncheck");
-
-        if (unknown.length) {
-          appendDiffRow(message, "Unknown ids (ignored)", unknown, "diff-unknown");
-        }
-
-        if (!toCheck.length && !toUncheck.length && !unknown.length) {
-          message.textContent = "Already in sync.";
-        }
+        closeLayer();
+        showSyncSummary(list, target, toCheck, toUncheck, unknown);
       });
 
       actionsRow.append(compare);
@@ -508,16 +598,40 @@ function render(adjectives, animals, fruits) {
   const label = document.createElement("div");
   Object.assign(label.style, {
     boxSizing: "border-box",
-    padding: "16px 32px",
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    padding: "16px 32px 16px 20px",
     borderRadius: "16px",
     background: "#1e3a8a",
     color: "#ffffff",
     fontSize: "2rem",
     fontWeight: "600",
     lineHeight: "1.2",
-    textAlign: "center",
+    textAlign: "left",
   });
-  label.textContent = `${randomItem(adjectives)} ${randomItem(animals)}`;
+
+  const avatar = document.createElement("span");
+  Object.assign(avatar.style, {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: "0 0 auto",
+    width: "64px",
+    height: "64px",
+    borderRadius: "50%",
+    background: "#ffffff",
+    fontSize: "2rem",
+    lineHeight: "1",
+  });
+  avatar.setAttribute("aria-hidden", "true");
+  avatar.textContent = "👤";
+
+  const labelName = document.createElement("span");
+  labelName.className = "fruit-avatar-name";
+  labelName.textContent = `${randomItem(adjectives)} ${randomItem(animals)}`;
+
+  label.append(avatar, labelName);
 
   const list = renderFruits(fruits);
 
